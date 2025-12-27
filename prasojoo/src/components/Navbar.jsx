@@ -33,13 +33,13 @@ const Navbar = () => {
             <img 
               src={assets.logo_prasojo} 
               alt="Logo" 
-              className="h-8 cursor-pointer" 
+              className="h-10 cursor-pointer" 
             />
           </Link>
 
 
           {/* Desktop Menu */}
-          <ul className="hidden md:flex gap-7 text-white">
+          <ul className="text-xl hidden md:flex gap-7 text-white">
             <Link to="/" className={isActive("/")}>Beranda</Link>
             <Link to="/tentang-detail" className={isActive("/tentang-detail")}>Tentang</Link>
             <Link to="/kegiatan-detail" className={isActive("/kegiatan-detail")}>Kegiatan</Link>
@@ -48,7 +48,7 @@ const Navbar = () => {
           {/* Login Button */}
           <a 
             href="http://127.0.0.1:8000/login"
-            className="hidden md:block bg-white px-8 py-2 rounded-full text-[#111827]"
+            className="hidden md:block bg-white font-bold px-6 py-2 rounded text-[#111827] transition hover:bg-[#25ff48] hover:text-[#111827]"
           >
             Log In
           </a>

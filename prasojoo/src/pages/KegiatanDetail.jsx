@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useRef } from "react";
-import { kegiatanData } from "../assets/assets";
+import { useEffect, useState, useRef } from "react";
 import Navbar from "../components/Navbar";
 
 const KegiatanDetail = () => {
+  const [data, setData] = useState([]);
   const [cardsToShow, setCardsToShow] = useState(1);
   const sliderRef = useRef(null);
   const [cardWidth, setCardWidth] = useState(0);
 
-  // Scroll ke atas saat halaman dibuka
+  // scroll ke atas
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -16,7 +16,7 @@ const KegiatanDetail = () => {
   useEffect(() => {
     const updateCardsToShow = () => {
       if (window.innerWidth >= 1280) {
-        setCardsToShow(4); 
+        setCardsToShow(4);
       } else if (window.innerWidth >= 1024) {
         setCardsToShow(3);
       } else {
@@ -46,8 +46,37 @@ const KegiatanDetail = () => {
     return () => window.removeEventListener("resize", updateCardWidth);
   }, [cardsToShow]);
 
+  // ambil data dari Laravel
+  useEffect(() => {
+    fetch("http://localhost:8000/api/kegiatan")
+      .then((res) => res.json())
+      .then((res) => setData(res))
+      .catch((err) => console.error(err));
+  }, []);
+
+  const handleImageLoad = (e) => {
+    const img = e.target;
+    const ratio = img.naturalWidth / img.naturalHeight;
+
+    // rasio 3:4 = 0.75
+    if (ratio < 0.75) {
+      // terlalu tinggi → crop
+      img.style.objectFit = "cover";
+    } else {
+      // lebar / normal → tampilkan utuh
+      img.style.objectFit = "contain";
+    }
+  };
+
+  const formatTanggal = (tanggal) => {
+    if (!tanggal) return "";
+    const [y, m, d] = tanggal.split("-");
+    return `${d}-${m}-${y}`;
+  };
+
+
   return (
-    <div className="container mx-auto w-full min-h-screen overflow-hidden bg-white">
+    <div className="mx-auto px-10 w-full min-h-screen bg-white">
       <Navbar />
 
       <div className="mt-10"></div>
@@ -63,46 +92,65 @@ const KegiatanDetail = () => {
           </span>
         </h1>
 
-        <p className="text-gray-500 text-xl max-w-2xl text-center mb-8 mx-auto">
+        <p className="text-gray-500 text-xl max-w-2xl text-center mb-10 mx-auto">
           Kegiatan yang telah Dilakukan oleh Prasojo
         </p>
 
         {/* GRID KEGIATAN */}
-        <div className="grid gap-10"
-             style={{
-               gridTemplateColumns: `repeat(${cardsToShow}, minmax(0, 1fr))`
-             }}>
-          {kegiatanData.map((kegiatan, index) => (
+        <div
+          ref={sliderRef}
+          className="mt-4 grid gap-10"
+          style={{
+            gridTemplateColumns: `repeat(${cardsToShow}, minmax(0, 1fr))`,
+          }}
+        >
+          {data.map((item) => (
             <div
-              key={index}
-              className="bg-white rounded-lg shadow hover:shadow-lg transition p-4"
-              style={{ width: "100%" }}
+              key={item.id}
+              className="
+                bg-white rounded-lg p-4
+                transition-all duration-300 ease-in-out
+                hover:-translate-y-3
+                shadow-[0_0_25px_rgba(0,0,0,0.15)]
+                hover:shadow-[0_0_40px_rgba(0,0,0,0.25)]
+              "
             >
-              {/* ukuran foto tetap */}
-              <div className="w-full h-[320px] bg-gray-85 rounded-lg flex items-center justify-center overflow-hidden">
-                <img src={kegiatan.image} 
-                alt={kegiatan.judul}
-                className="max-h-full max-w-full object-contain" />
+              <div
+                className="w-full bg-white rounded-lg overflow-hidden"
+                style={{ aspectRatio: "3 / 4" }}
+              >
+                <img
+                  src={`http://localhost:8000/storage/${item.foto}`}
+                  alt={item.judul}
+                  onLoad={handleImageLoad}
+                  className="w-full h-full"
+                />
+
               </div>
 
-
-              <div className="px-1.5">
+              <div className="px-1.5 mt-3">
                 <h2 className="text-xl font-semibold text-gray-800">
-                  {kegiatan.judul}
+                  {item.judul}
                 </h2>
 
                 <p className="text-gray-500 text-sm mt-1">
-                  {kegiatan.tanggal} <span className="px-1">|</span>{" "}
-                  {kegiatan.lokasi}
+                  {formatTanggal(item.tanggal)}
+                  {item.lokasi && (
+                    <>
+                      <span className="px-1">|</span>
+                      {item.lokasi}
+                    </>
+                  )}
                 </p>
 
                 <p className="text-gray-600 text-sm mt-3 leading-relaxed text-justify">
-                  {kegiatan.deskripsi}
+                  {item.deskripsi}
                 </p>
               </div>
             </div>
           ))}
         </div>
+
       </div>
     </div>
   );

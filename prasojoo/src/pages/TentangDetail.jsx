@@ -10,14 +10,14 @@ const TentangDetail = () => {
   }, []);
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden bg-white">
+    <div className="relative w-full min-h-screen overflow-hidden">
       <Navbar />
 
       {/* Spacer supaya konten tidak tertutup navbar */}
       <div className="mt-10"></div>
 
       {/* Konten utama */}
-      <div className="flex flex-col items-center justify-center mx-auto p-14 md:px-20 lg:px-32 w-full overflow-hidden">
+      <div className="flex flex-col items-center justify-center mx-auto p-14 md:px-20 lg:px-32 w-full overflow-hidden" >
         
         <h1 className="text-2xl sm:text-4xl text-[#111827] font-bold mb-2 text-center">
           Tentang <span className="underline underline-offset-4 decoration-1 font-light">Prasojo</span>
@@ -33,7 +33,8 @@ const TentangDetail = () => {
           className="w-full sm:w-1/2 max-w-lg mb-8"
         />
 
-        <div className="text-[#111827] max-w-4xl space-y-6 text-[17px] leading-relaxed text-justify">
+        <div className="text-[20px] text-[#111827] max-w-6xl px-4 sm:px-6 md:px-8 space-y-6 leading-relaxed text-justify">
+
           <p>
             Paguyuban Pemuda Prasojo, atau yang akrab disebut Prasojo, merupakan organisasi kepemudaan 
             yang berdiri di Desa Juwiring. Organisasi ini menjadi wadah bagi para pemuda untuk 

@@ -8,13 +8,11 @@
 </head>
 <body class="bg-gray-100">
 
-<div class="flex">
-
     {{-- SIDEBAR --}}
     @include('partials.sidebar')
 
     {{-- MAIN CONTENT --}}
-    <div class="flex-1 p-8">
+    <div class="ml-60 p-8">
 
         {{-- TOP NAV --}}
         @include('partials.topbar')
@@ -23,8 +21,5 @@
         @yield('content')
 
     </div>
-
-</div>
-
 </body>
 </html>

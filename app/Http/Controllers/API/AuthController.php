@@ -10,9 +10,7 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    // =====================
     // API LOGIN
-    // =====================
     public function login(Request $request)
     {
         $request->validate([
@@ -34,9 +32,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // =====================
     // WEB LOGIN (Blade)
-    // =====================
     public function loginWeb(Request $request)
     {
         $request->validate([
@@ -60,9 +56,7 @@ class AuthController extends Controller
         return redirect()->intended('/dashboard');
     }
 
-    // =====================
     // WEB LOGOUT
-    // =====================
     public function logoutWeb(Request $request)
     {
         Auth::logout();

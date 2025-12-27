@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Inventaris;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InventarisWebController extends Controller
 {
@@ -84,4 +85,15 @@ class InventarisWebController extends Controller
 
         return response()->json(['message'=>'Data berhasil dihapus']);
     }
+
+    public function pdf()
+    {
+        $data = Inventaris::orderBy('id')->get();
+
+        return Pdf::loadView('pdf.pdf', [
+            'data'  => $data,
+            'jenis' => 'sosial'
+        ])->download('laporan-inventaris.pdf');
+    }
+
 }

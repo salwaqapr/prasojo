@@ -9,19 +9,15 @@ const Beranda = () => {
   
   return (
     <div
-      className="
-        min-h-screen flex items-center w-full overflow-hidden
-        bg-[#111827] bg-cover
-        bg-right md:bg-center
-      "
-      style={{ backgroundImage: "url('/beranda.png')" }}
-      id="Header"
+      className='min-h-screen flex items-center w-full overflow-hidden bg-[#111827] bg-cover bg-center'
+      style={{backgroundImage: "url('/beranda.png')"}}
+      id='Header'
     >
       {/* Konten */}
       <Navbar />
       <div className='relative w-full'>
         <div className='container text-center mx-auto py-4 px-6 md:px-2 lg:px-2 text-white'>
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 px-6 md:px-24 text-left">
+          <div className="text-center px-4">
             <h1
               className="
                 text-6xl sm:text-7xl font-extrabold text-white
@@ -37,7 +33,7 @@ const Beranda = () => {
 
             <h2
               className="
-                text-4xl font-semibold mt-5 text-white
+                text-3xl sm:text-4xl font-semibold mt-5 text-white
                 drop-shadow-[0_3px_6px_rgba(0,0,0,0.7)]
                 [text-shadow:
                   0_1px_3px_rgba(0,0,0,0.9),
@@ -45,34 +41,18 @@ const Beranda = () => {
                 ]
               "
             >
-              di Paguyuban Pemuda Prasojo
+              di Website Paguyuban Pemuda Prasojo
             </h2>
-
-            <div className="mt-8 flex gap-4">
-              <a
-                href="#Tentang"
-                className="bg-[white] text-[#111827] text-l
-                           font-bold px-6 py-3 rounded
-                           transition hover:bg-[#ffa725] hover:text-[#111827]"
-              >
-                Tentang
-              </a>
-
-              <a
-                href="#Kegiatan"
-                className="bg-white text-[#111827] text-l
-                           font-bold px-6 py-3 rounded
-                           transition hover:bg-[#ffa725] hover:text-[#111827]"
-              >
-                Kegiatan
-              </a>
-            </div>
           </div>
 
+          <div className='space-x-6 mt-10'>
+            <a href="#Tentang" className='text-[#111827] bg-white font-bold px-8 py-3 rounded transition hover:bg-blue-600 hover:text-white'>Tentang</a>
+            <a href="#Kegiatan" className='text-[#111827] bg-white font-bold px-8 py-3 rounded transition hover:bg-blue-600 hover:text-white'>Kegiatan</a>
+          </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default Beranda

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Sosial;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SosialWebController extends Controller
 {
@@ -84,4 +85,15 @@ class SosialWebController extends Controller
 
         return response()->json(['message'=>'Data berhasil dihapus']);
     }
+
+    public function pdf()
+    {
+        $data = Sosial::orderBy('id')->get();
+
+        return Pdf::loadView('pdf.pdf', [
+            'data'  => $data,
+            'jenis' => 'sosial'
+        ])->download('laporan-sosial.pdf');
+    }
+
 }

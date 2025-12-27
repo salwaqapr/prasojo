@@ -1,31 +1,48 @@
-@extends('layouts.main')
+@extends('layouts.main') 
 
 @section('content')
-<div class="p-6">
+@php
+    $canManage = in_array(auth()->user()->nama, ['Admin', 'Bendahara']);
+@endphp
 
-    {{-- Header --}}
-    <div class="flex justify-between items-center mb-4">
-        <button id="btnTambah" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-            + Tambah
-        </button>
+<div class="p-2">
+
+    {{-- Tambah --}}
+    <div class="flex justify-end h-8 gap-2">
+        @if($canManage)
+            <a href="{{ route('kas.pdf') }}"
+                class="bg-blue-700 text-white px-3 py-1 rounded hover:bg-blue-800 transition">
+                Unduh
+            </a>
+            <button id="btnTambah"
+                class="bg-green-700 text-white px-3 py-1 rounded hover:bg-green-800 transition">
+                Tambah
+            </button>
+        @endif
     </div>
 
+
     {{-- Tabel --}}
-    <div class="overflow-x-auto">
-        <table class="w-full border border-gray-300 rounded-lg">
-            <thead class="bg-gray-100">
+    <div class="relative mt-6">
+        <div class="overflow-x-auto rounded-2xl">
+        <table class="min-w-[900px] w-full bg-white">
+            <thead class="bg-[#111827] text-white text-sm">
                 <tr>
-                    <th class="border p-2">No</th>
-                    <th class="border p-2">ID</th>
-                    <th class="border p-2">Tanggal</th>
-                    <th class="border p-2">Subjek</th>
-                    <th class="border p-2">Pemasukan</th>
-                    <th class="border p-2">Pengeluaran</th>
-                    <th class="border p-2">Saldo</th>
-                    <th class="border p-2">Aksi</th>
+                    <th class="p-2 text-center">No</th>
+                    <th class="p-2 text-center">ID</th>
+                    <th class="p-2 text-center">Tanggal</th>
+                    <th class="p-2 text-center">Subjek</th>
+                    <th class="p-2 text-center">Pemasukan</th>
+                    <th class="p-2 text-center">Pengeluaran</th>
+                    <th class="p-2 text-center">Saldo</th>
+
+                    @if($canManage)
+                        <th class="p-2 text-center">Aksi</th>
+                    @endif
                 </tr>
             </thead>
-            <tbody id="kasTable">
+
+            <tbody class="text-sm">
                 @php $runningSaldo = 0; @endphp
                 @foreach ($kas as $index => $item)
                     @php
@@ -33,27 +50,54 @@
                         $pengeluaran = $item->pengeluaran ?? 0;
                         $runningSaldo += $pemasukan - $pengeluaran;
                     @endphp
-                    <tr data-id="{{ $item->id }}">
-                        <td class="border p-2 text-center">{{ $index + 1 }}</td>
-                        <td class="border p-2 text-center">K-{{ str_pad($item->id, 4, '0', STR_PAD_LEFT) }}</td>
-                        <td class="border p-2 text-center">{{ $item->tanggal }}</td>
-                        <td class="border p-2">{{ $item->subjek }}</td>
-                        <td class="border p-2 text-right">{{ $pemasukan ? 'Rp. ' . number_format($pemasukan,0,',','.') : 'Rp. 0' }}</td>
-                        <td class="border p-2 text-right">{{ $pengeluaran ? 'Rp. ' . number_format($pengeluaran,0,',','.') : 'Rp. 0' }}</td>
-                        <td class="border p-2 text-right">{{ 'Rp. ' . number_format($runningSaldo,0,',','.') }}</td>
-                        <td class="border p-2 text-center">
-                            <button class="text-blue-600 hover:underline editBtn">Edit</button> |
-                            <button class="text-red-600 hover:underline deleteBtn">Hapus</button>
+                    <tr class="border-b hover:bg-gray-50" data-id="{{ $item->id }}">
+                        <td class="p-2 text-center whitespace-nowrap  font-medium">
+                            {{ $index + 1 }}</td>
+
+                        <td class="p-2 text-center whitespace-nowrap  font-medium">
+                            K-{{ str_pad($item->id, 4, '0', STR_PAD_LEFT) }}
                         </td>
+
+                        <td class="p-2 text-center whitespace-nowrap font-medium">
+                            {{ \Carbon\Carbon::parse($item->tanggal)->format('j-m-Y') }}
+                        </td>
+
+                        <td class="p-2  font-medium">
+                            {{ $item->subjek }}</td>
+
+                        <td class="p-2 text-right whitespace-nowrap  font-medium">
+                            {{ $pemasukan ? 'Rp. '.number_format($pemasukan,0,',','.') : 'Rp. 0' }}
+                        </td>
+
+                        <td class="p-2 text-right whitespace-nowrap  font-medium">
+                            {{ $pengeluaran ? 'Rp. '.number_format($pengeluaran,0,',','.') : 'Rp. 0' }}
+                        </td>
+
+                        <td class="p-2 text-right whitespace-nowrap font-medium">
+                            {{ 'Rp. '.number_format($runningSaldo,0,',','.') }}
+                        </td>
+
+                        @if($canManage)
+                        <td class="p-2 text-center whitespace-nowrap">
+                            <div class="flex justify-center gap-1">
+                                <button class="editBtn bg-yellow-400 hover:bg-yellow-600 text-black px-2 py-1 rounded text-xs">
+                                    Edit
+                                </button>
+                                <button class="deleteBtn bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">
+                                    Hapus
+                                </button>
+                            </div>
+                        </td>
+                        @endif
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
-
 </div>
 
 {{-- MODAL TAMBAH / EDIT --}}
+@if($canManage)
 <div id="modalTambah" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
     <div class="bg-white p-6 rounded-lg shadow-xl w-96">
 
@@ -87,7 +131,6 @@
             <button id="btnBatal" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
             <button id="btnSimpan" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Simpan</button>
         </div>
-
     </div>
 </div>
 
@@ -96,128 +139,158 @@
     <div class="bg-white p-6 rounded-lg shadow-xl w-80 text-center">
         <h2 class="text-lg font-bold mb-4">Hapus Data?</h2>
         <p class="mb-4">Apakah Anda yakin menghapus data ini?</p>
-
         <div class="flex justify-center gap-3">
             <button id="hapusYa" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Ya</button>
             <button id="hapusTidak" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Tidak</button>
         </div>
     </div>
 </div>
+@endif
 
+@if($canManage)
 <script>
 const csrfToken = '{{ csrf_token() }}';
 const modalTambah = document.getElementById("modalTambah");
 const modalHapus = document.getElementById("modalHapus");
 const errorBox = document.getElementById("errorBox");
+const modalTitle = document.getElementById("modalTitle");
+
 let editingId = null;
 let rowToDelete = null;
 
 const today = new Date();
-document.getElementById("tanggal").setAttribute("max", today.toISOString().split("T")[0]);
+tanggal.max = today.toISOString().split("T")[0];
 
-function showError(msg) { errorBox.innerText = msg; errorBox.classList.remove("hidden"); }
-function hideError() { errorBox.classList.add("hidden"); }
-function kosongkanForm() {
-    document.getElementById("tanggal").value = "";
-    document.getElementById("subjek").value = "";
-    document.getElementById("pemasukan").value = "";
-    document.getElementById("pengeluaran").value = "";
-    document.getElementById("pemasukan").disabled = false;
-    document.getElementById("pengeluaran").disabled = false;
+function showError(msg){
+    errorBox.innerText = msg;
+    errorBox.classList.remove("hidden");
+}
+function hideError(){
+    errorBox.classList.add("hidden");
 }
 
-function formatRupiah(number){
-    let isNegative = number.toString().includes("-");
-    number = number.toString().replace(/[^0-9]/g, "").replace(/^0+/, ""); 
-    if(!number) return "Rp. 0";
-    let formatted = number.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    return (isNegative ? "- Rp. " : "Rp. ") + formatted;
+function kosongkanForm(){
+    tanggal.value = "";
+    subjek.value = "";
+    pemasukan.value = "";
+    pengeluaran.value = "";
+    pemasukan.disabled = false;
+    pengeluaran.disabled = false;
 }
 
-document.querySelectorAll('.rupiah-only').forEach(input => {
-    input.addEventListener('input', function () {
+function formatRupiah(val){
+    val = val.replace(/[^0-9]/g,'');
+    val = val.replace(/^0+/, ''); // ❌ nol di depan
+    return val ? "Rp. " + val.replace(/\B(?=(\d{3})+(?!\d))/g,'.') : "";
+}
+
+function syncDisable(){
+    pemasukan.disabled = pengeluaran.value !== "";
+    pengeluaran.disabled = pemasukan.value !== "";
+}
+
+document.querySelectorAll('.rupiah-only').forEach(i=>{
+    i.addEventListener('input',function(){
         this.value = formatRupiah(this.value);
-        if(this.id==="pemasukan") document.getElementById("pengeluaran").disabled = this.value && this.value!=="Rp. 0";
-        if(this.id==="pengeluaran") document.getElementById("pemasukan").disabled = this.value && this.value!=="Rp. 0";
+        syncDisable();
     });
 });
 
-document.getElementById("btnTambah").onclick = ()=>{
+/* =========================
+   MODE TAMBAH
+========================= */
+btnTambah.onclick = ()=>{
     editingId = null;
+    modalTitle.innerText = "Tambah Data Kas";
     kosongkanForm();
     hideError();
-    document.getElementById("modalTitle").innerText = "Tambah Kas";
     modalTambah.classList.remove("hidden");
 };
-document.getElementById("btnBatal").onclick = ()=> modalTambah.classList.add("hidden");
 
-// SIMPAN / EDIT
-document.getElementById("btnSimpan").onclick = async ()=>{
-    hideError();
-    const tanggal = document.getElementById("tanggal").value;
-    const subjek = document.getElementById("subjek").value;
-    const pemasukan = parseInt(document.getElementById("pemasukan").value.replace(/[^0-9]/g,''))||0;
-    const pengeluaran = parseInt(document.getElementById("pengeluaran").value.replace(/[^0-9]/g,''))||0;
+/* =========================
+   BATAL
+========================= */
+btnBatal.onclick = ()=> modalTambah.classList.add("hidden");
 
-    if(!tanggal) return showError("Tanggal wajib diisi.");
-    if(!subjek) return showError("Subjek wajib diisi.");
-    if(pemasukan===0 && pengeluaran===0) return showError("Isi salah satu: pemasukan atau pengeluaran.");
+/* =========================
+   SIMPAN (TAMBAH / EDIT)
+========================= */
+btnSimpan.onclick = async ()=>{
+    const data = {
+        tanggal: tanggal.value,
+        subjek: subjek.value,
+        pemasukan: parseInt(pemasukan.value.replace(/\D/g,'')) || 0,
+        pengeluaran: parseInt(pengeluaran.value.replace(/\D/g,'')) || 0
+    };
+
+    if(!data.tanggal || !data.subjek || (!data.pemasukan && !data.pengeluaran)){
+        showError("Data belum lengkap.");
+        return;
+    }
 
     const url = editingId ? `/kas/${editingId}` : "{{ route('kas.store') }}";
     const method = editingId ? "PUT" : "POST";
 
-    const res = await fetch(url, {
-        method: method,
-        headers: {
+    const res = await fetch(url,{
+        method,
+        headers:{
             "Content-Type":"application/json",
             "X-CSRF-TOKEN": csrfToken
         },
-        body: JSON.stringify({tanggal, subjek, pemasukan, pengeluaran})
+        body: JSON.stringify(data)
     });
-    if(res.ok){
-        location.reload();
-    }else{
-        showError("Gagal menyimpan data.");
-    }
+
+    res.ok ? location.reload() : showError("Gagal menyimpan data.");
 };
 
-// EDIT
-document.addEventListener("click", function(e){
+/* =========================
+   MODE EDIT & HAPUS
+========================= */
+document.addEventListener("click",e=>{
     if(e.target.classList.contains("editBtn")){
-        const row = e.target.closest("tr");
-        editingId = row.dataset.id;
-        document.getElementById("modalTitle").innerText = "Edit Kas";
-        document.getElementById("tanggal").value = row.children[2].innerText;
-        document.getElementById("subjek").value = row.children[3].innerText;
-        document.getElementById("pemasukan").value = row.children[4].innerText!=="Rp. 0"?row.children[4].innerText:"";
-        document.getElementById("pengeluaran").value = row.children[5].innerText!=="Rp. 0"?row.children[5].innerText:"";
-        document.getElementById("pemasukan").disabled = document.getElementById("pengeluaran").value!=="" && document.getElementById("pengeluaran").value!=="Rp. 0";
-        document.getElementById("pengeluaran").disabled = document.getElementById("pemasukan").value!=="" && document.getElementById("pemasukan").value!=="Rp. 0";
+        const r = e.target.closest("tr");
+        editingId = r.dataset.id;
+
+        modalTitle.innerText = "Edit Data Kas";
+
+        // Format tanggal ke YYYY-MM-DD
+        const tgl = r.children[2].innerText.split("-");
+        const day   = tgl[0].padStart(2, '0');
+        const month = tgl[1].padStart(2, '0');
+        const year  = tgl[2];
+        tanggal.value = `${year}-${month}-${day}`;
+
+        subjek.value = r.children[3].innerText;
+        pemasukan.value = r.children[4].innerText !== "Rp. 0" ? r.children[4].innerText : "";
+        pengeluaran.value = r.children[5].innerText !== "Rp. 0" ? r.children[5].innerText : "";
+
+        pemasukan.disabled = false;
+        pengeluaran.disabled = false;
+        syncDisable();
+
         hideError();
         modalTambah.classList.remove("hidden");
     }
-});
 
-// HAPUS
-document.addEventListener("click", function(e){
     if(e.target.classList.contains("deleteBtn")){
         rowToDelete = e.target.closest("tr");
         modalHapus.classList.remove("hidden");
     }
 });
-document.getElementById("hapusTidak").onclick = ()=> modalHapus.classList.add("hidden");
-document.getElementById("hapusYa").onclick = async ()=>{
-    if(!rowToDelete) return;
-    const id = rowToDelete.dataset.id;
-    const res = await fetch(`/kas/${id}`,{
+
+/* =========================
+   HAPUS
+========================= */
+hapusTidak.onclick = ()=> modalHapus.classList.add("hidden");
+
+hapusYa.onclick = async ()=>{
+    const res = await fetch(`/kas/${rowToDelete.dataset.id}`,{
         method:"DELETE",
-        headers: {"X-CSRF-TOKEN":csrfToken}
+        headers:{ "X-CSRF-TOKEN": csrfToken }
     });
-    if(res.ok){
-        location.reload();
-    }else{
-        alert("Gagal menghapus data.");
-    }
+
+    res.ok ? location.reload() : alert("Gagal hapus data");
 };
 </script>
+@endif
 @endsection

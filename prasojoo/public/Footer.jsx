@@ -9,7 +9,7 @@ const Footer = () => {
             <img src={assets.logo_prasojo} alt="" className="h-12"/>
             <p className='text-white mt-4'>Paguyuban Pemuda Prasojo merupakan organisasi kepemudaan
               yang berada di Desa Juwiring. Terdiri dari empat Pokja, yaitu Pokja Bagor,
-              Pokja Kamongan, Pokja Juwiring Pasar, dan Pokja Winong.</p>
+              Pokja Kamongan, Pokja Juwiring Pasar, dan Pokja Winong dengan 82 anggota aktif.</p>
         </div>
         <div className='w-full md:w-4/15'>
         <h3 className='text-white text-2xl font-bold mb-4'>Ikuti Kami</h3>

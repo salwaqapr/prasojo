@@ -5,15 +5,27 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Kas;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class KasWebController extends Controller
 {
     public function index()
     {
-        // Urut berdasarkan ID ascending supaya tampilannya konsisten
         $kas = Kas::orderBy('id', 'asc')->get();
-        return view('pages.kas', ['pageTitle'=>'Kas','kas'=>$kas]);
+
+        $totalPemasukan = $kas->sum('pemasukan');
+        $totalPengeluaran = $kas->sum('pengeluaran');
+        $saldo = $totalPemasukan - $totalPengeluaran;
+
+        return view('pages.kas', [
+            'pageTitle' => 'Kas',
+            'kas' => $kas,
+            'totalPemasukan' => $totalPemasukan,
+            'totalPengeluaran' => $totalPengeluaran,
+            'saldo' => $saldo
+        ]);
     }
+
 
     public function store(Request $request)
     {
@@ -83,5 +95,15 @@ class KasWebController extends Controller
         }
 
         return response()->json(['message'=>'Data berhasil dihapus']);
+    }
+
+    public function pdf()
+    {
+        $data = Kas::orderBy('id')->get();
+
+        return Pdf::loadView('pdf.pdf', [
+            'data'  => $data,
+            'jenis' => 'kas'
+        ])->download('laporan-kas.pdf');
     }
 }

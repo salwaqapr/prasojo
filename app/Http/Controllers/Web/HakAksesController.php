@@ -13,7 +13,7 @@ class HakAksesController extends Controller
     {
         return view('pages.hakAkses', [
             'pageTitle' => 'Hak Akses',
-            'users' => User::orderBy('id', 'asc')->get()
+            'users' => User::orderBy('id', 'desc')->get()
         ]);
     }
 

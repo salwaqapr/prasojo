@@ -22,11 +22,13 @@ const Kegiatan = () => {
   useEffect(() => {
     const updateCardsToShow = () => {
       if (window.innerWidth >= 1280) {
-        setCardsToShow(4);
-      } else if (window.innerWidth >= 1024) {
-        setCardsToShow(3);
+        setCardsToShow(4); // desktop besar
+      } else if (window.innerWidth >= 900) {
+        setCardsToShow(3); // laptop
+      } else if (window.innerWidth >= 500) {
+        setCardsToShow(2); // tablet
       } else {
-        setCardsToShow(2);
+        setCardsToShow(1); // MOBILE 🔥
       }
     };
 
@@ -126,7 +128,7 @@ const Kegiatan = () => {
         </div>
 
         <button
-          className="bg-[#111827] text-white font-bold px-4 py-3 rounded transition hover:bg-[#ffa725] hover:text-[#111827]"
+          className="bg-[#111827] text-white font-bold px-3 py-2 rounded transition hover:bg-[#ffa725] hover:text-[#111827]"
           onClick={() => navigate('/kegiatan-detail')}
         >
           Selengkapnya
@@ -146,7 +148,7 @@ const Kegiatan = () => {
           {data.map((item) => (
             <div
               key={item.id}
-              className="flex-shrink-0 relative bg-white runded-lg p-4 mt-6 mb-6
+              className="flex-shrink-0 relative bg-white rounded p-4 mt-6 mb-6
                 transition-all duration-300 ease-in-out
                 hover:-translate-y-3
                 shadow-[0_0_25px_rgba(0,0,0,0.15)]
@@ -179,7 +181,6 @@ const Kegiatan = () => {
                     </p>
                   </div>
                 </div>
-
               </div>
             </div>
           ))}

@@ -3,6 +3,7 @@ import { useState } from "react";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
@@ -28,19 +29,18 @@ export default function Login() {
 
       console.log("Login sukses:", data);
       // window.location.href = "/dashboard";
-
     } catch {
       setError("Server tidak dapat dihubungi");
     }
   };
 
   return (
-  <div
-  className="relative min-h-screen w-full bg-cover bg-center flex items-center"
-  style={{ backgroundImage: "url('/login.png')" }}
-  >
-
-      {/* login box */}
+    <div
+      className="min-h-screen flex items-center w-full overflow-hidden
+        bg-[#111827] bg-cover
+        [background-position:70%_center]"
+      style={{ backgroundImage: "url('/login.png')" }}
+    >
       <div className="relative z-10 ml-6 md:ml-20 w-full max-w-md p-4">
         <div className="bg-[#111827]/95 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl p-8">
 
@@ -55,6 +55,8 @@ export default function Login() {
           )}
 
           <form onSubmit={handleLogin} className="space-y-4">
+
+            {/* EMAIL */}
             <div>
               <label className="block text-white text-sm mb-1">Email</label>
               <input
@@ -68,17 +70,30 @@ export default function Login() {
               />
             </div>
 
+            {/* PASSWORD + EYE */}
             <div>
               <label className="block text-white text-sm mb-1">Password</label>
-              <input
-                type="password"
-                className="w-full px-4 py-3 rounded-lg bg-[#0f172a] text-white
-                           outline-none border border-white/10
-                           focus:ring-4 focus:ring-yellow-300"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="w-full px-4 py-3 pr-12 rounded-lg bg-[#0f172a] text-white
+                             outline-none border border-white/10
+                             focus:ring-4 focus:ring-yellow-300"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-3 flex items-center
+                             text-xl text-gray-300 hover:text-white"
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
             </div>
 
             <button
@@ -88,6 +103,7 @@ export default function Login() {
             >
               Masuk
             </button>
+
           </form>
         </div>
       </div>

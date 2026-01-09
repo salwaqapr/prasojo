@@ -6,43 +6,82 @@ use App\Http\Controllers\Controller;
 use App\Models\Kas;
 use App\Models\Inventaris;
 use App\Models\Sosial;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function dashboard()
+    public function dashboard(Request $request)
     {
-        // KAS
-        $kasPemasukan = Kas::sum('pemasukan');
-        $kasPengeluaran = Kas::sum('pengeluaran');
-        $kasSaldo = $kasPemasukan - $kasPengeluaran;
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
 
-        // INVENTARIS
-        $inventarisPemasukan = Inventaris::sum('pemasukan');
-        $inventarisPengeluaran = Inventaris::sum('pengeluaran');
-        $inventarisSaldo = Inventaris::orderBy('id','desc')->value('saldo') ?? 0;
+        /* ======================
+           FILTER BULAN & TAHUN
+        ====================== */
+        $filter = function ($query) use ($bulan, $tahun) {
+            if ($tahun) {
+                $query->whereYear('tanggal', $tahun);
+            }
+            if ($bulan) {
+                $query->whereMonth('tanggal', $bulan);
+            }
+        };
 
-        // SOSIAL
-        $sosialPemasukan = Sosial::sum('pemasukan');
-        $sosialPengeluaran = Sosial::sum('pengeluaran');
-        $sosialSaldo = Sosial::orderBy('id','desc')->value('saldo') ?? 0;
+        /* ======================
+           DATA KAS
+        ====================== */
+        $kasPemasukan   = Kas::where($filter)->sum('pemasukan');
+        $kasPengeluaran = Kas::where($filter)->sum('pengeluaran');
+        $kasSaldo       = $kasPemasukan - $kasPengeluaran;
 
-        return view('pages.dashboard', [
-            'pageTitle' => 'Dashboard',
+        /* ======================
+           DATA INVENTARIS
+        ====================== */
+        $inventarisPemasukan   = Inventaris::where($filter)->sum('pemasukan');
+        $inventarisPengeluaran = Inventaris::where($filter)->sum('pengeluaran');
+        $inventarisSaldo       = $inventarisPemasukan - $inventarisPengeluaran;
 
-            // kas
-            'kasPemasukan' => $kasPemasukan,
-            'kasPengeluaran' => $kasPengeluaran,
-            'kasSaldo' => $kasSaldo,
+        /* ======================
+           DATA SOSIAL
+        ====================== */
+        $sosialPemasukan   = Sosial::where($filter)->sum('pemasukan');
+        $sosialPengeluaran = Sosial::where($filter)->sum('pengeluaran');
+        $sosialSaldo       = $sosialPemasukan - $sosialPengeluaran;
 
-            // inventaris
-            'inventarisPemasukan' => $inventarisPemasukan,
-            'inventarisPengeluaran' => $inventarisPengeluaran,
-            'inventarisSaldo' => $inventarisSaldo,
+        /* ======================
+           BULAN & TAHUN DARI DATA (GABUNGAN)
+        ====================== */
+        $bulanList = collect()
+            ->merge(Kas::selectRaw('MONTH(tanggal) as bulan')->pluck('bulan'))
+            ->merge(Inventaris::selectRaw('MONTH(tanggal) as bulan')->pluck('bulan'))
+            ->merge(Sosial::selectRaw('MONTH(tanggal) as bulan')->pluck('bulan'))
+            ->unique()
+            ->sort()
+            ->values();
 
-            // sosial
-            'sosialPemasukan' => $sosialPemasukan,
-            'sosialPengeluaran' => $sosialPengeluaran,
-            'sosialSaldo' => $sosialSaldo,
-        ]);
+        $tahunList = collect()
+            ->merge(Kas::selectRaw('YEAR(tanggal) as tahun')->pluck('tahun'))
+            ->merge(Inventaris::selectRaw('YEAR(tanggal) as tahun')->pluck('tahun'))
+            ->merge(Sosial::selectRaw('YEAR(tanggal) as tahun')->pluck('tahun'))
+            ->unique()
+            ->sortDesc()
+            ->values();
+
+        return view('pages.dashboard', compact(
+            'bulan',
+            'tahun',
+            'bulanList',
+            'tahunList',
+            'kasPemasukan',
+            'kasPengeluaran',
+            'kasSaldo',
+            'inventarisPemasukan',
+            'inventarisPengeluaran',
+            'inventarisSaldo',
+            'sosialPemasukan',
+            'sosialPengeluaran',
+            'sosialSaldo'
+        ));
     }
 }

@@ -1,98 +1,173 @@
 @extends('layouts.main')
 
 @section('content')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div class="space-y-10 mt-12">
+@php
+    $namaBulan = [
+        1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',
+        5=>'Mei',6=>'Juni',7=>'Juli',8=>'Agustus',
+        9=>'September',10=>'Oktober',11=>'November',12=>'Desember'
+    ];
+@endphp
 
-    {{-- KAS --}}
-    <div class="relative">
-        <h3 class="text-xl font-bold text-[#111827] mb-3">Kas</h3>
-    <div class="overflow-x-auto rounded-2xl">
-        <table class="min-w-[1100px] w-full bg-white">
-            <thead class="bg-[#111827] text-white text-sm">
-                <tr>
-                    <th class="p-2 text-center">Pemasukan</th>
-                    <th class="p-2 text-center">Pengeluaran</th>
-                    <th class="p-2 text-center">Saldo</th>
-                </tr>
-            </thead>
-            <tbody class="text-sm">
-                <tr
-                    class="border-b hover:bg-gray-50">
-                    <td class="p-3 text-xl font-bold text-center whitespace-nowrap text-green-600">
-                        Rp {{ number_format($kasPemasukan, 0, ',', '.') }}
-                    </td>
-                    <td class="p-3 text-xl font-bold text-center whitespace-nowrap text-red-600">
-                        Rp {{ number_format($kasPengeluaran, 0, ',', '.') }}
-                    </td>
-                    <td class="p-3 text-xl font-bold text-center whitespace-nowrap text-blue-600">
-                        Rp {{ number_format($kasSaldo, 0, ',', '.') }}
-                    </td>
-                </tr>
-            </tbody>
+<div class="p-3">
+
+    {{-- FILTER GLOBAL --}}
+    <form id="filterForm" method="GET" class="flex gap-2 mb-6">
+        <select name="bulan" id="filterBulan" class="border px-2 py-1 rounded text-sm w-full lg:w-40">
+            <option value="">Semua Bulan</option>
+            @foreach ($bulanList as $b)
+            <option value="{{ $b }}" {{ request('bulan')==$b ? 'selected' : '' }}>
+                    {{ $namaBulan[$b] }}
+                </option>
+            @endforeach
+        </select>
+
+        {{-- TAHUN --}}
+        <select name="tahun" id="filterTahun" class="border px-2 py-1 rounded text-sm w-full lg:w-40">
+            <option value="">Semua Tahun</option>
+            @foreach ($tahunList as $t)
+                <option value="{{ $t }}" {{ request('tahun')==$t ? 'selected' : '' }}>
+                    {{ $t }}
+                </option>
+            @endforeach
+        </select>
+    </form>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+    {{-- ======================
+    KAS
+    ====================== --}}
+    <div class="bg-white rounded-2xl p-5 shadow">
+        <h3 class="text-xl font-bold mb-3">KAS</h3>
+        <div class="relative h-80 flex items-center justify-center">
+            <canvas id="kasChart"></canvas>
+        </div>
+
+        <table class="w-full text-sm mt-4">
+            <tr>
+                <td class="text-green-600 font-semibold">Pemasukan</td>
+                <td class="text-right text-green-600 font-semibold">
+                    Rp {{ number_format($kasPemasukan,0,',','.') }}
+                </td>
+            </tr>
+            <tr>
+                <td class="text-red-600 font-semibold">Pengeluaran</td>
+                <td class="text-right text-red-600 font-semibold">
+                    Rp {{ number_format($kasPengeluaran,0,',','.') }}
+                </td>
+            </tr>
+            <tr class="border-t">
+                <td class="text-blue-600 font-bold">Saldo</td>
+                <td class="text-right text-blue-600 font-bold">
+                    Rp {{ number_format($kasSaldo,0,',','.') }}
+                </td>
+            </tr>
         </table>
     </div>
-    </div>    
 
-    {{-- INVENTARIS --}}
-    <div class="relative">
-        <h3 class="text-xl font-bold text-[#111827] mb-3">Inventaris</h3>
-    <div class="overflow-x-auto rounded-2xl">
-        <table class="min-w-[1100px] w-full bg-white">
-            <thead class="bg-[#111827] text-white text-sm">
-                <tr>
-                    <th class="p-2 text-center">Pemasukan</th>
-                    <th class="p-2 text-center">Pengeluaran</th>
-                    <th class="p-2 text-center">Saldo</th>
-                </tr>
-            </thead>
-            <tbody class="text-sm">
-                <tr
-                    class="border-b hover:bg-gray-50">
-                    <td class="p-3 text-xl font-bold text-center whitespace-nowrap text-green-600">
-                        Rp {{ number_format($inventarisPemasukan, 0, ',', '.') }}
-                    </td>
-                    <td class="p-3 text-xl font-bold text-center whitespace-nowrap text-red-600">
-                        Rp {{ number_format($inventarisPengeluaran, 0, ',', '.') }}
-                    </td>
-                    <td class="p-3 text-xl font-bold text-center whitespace-nowrap text-blue-600">
-                        Rp {{ number_format($inventarisSaldo, 0, ',', '.') }}
-                    </td>
-                </tr>
-            </tbody>
+    {{-- ======================
+    INVENTARIS
+    ====================== --}}
+    <div class="bg-white rounded-2xl p-5 shadow">
+        <h3 class="text-xl font-bold mb-3">INVENTARIS</h3>
+        <div class="relative h-80 flex items-center justify-center">
+            <canvas id="inventarisChart"></canvas>
+        </div>
+
+        <table class="w-full text-sm mt-4">
+            <tr>
+                <td class="text-green-600 font-semibold">Pemasukan</td>
+                <td class="text-right text-green-600 font-semibold">
+                    Rp {{ number_format($inventarisPemasukan,0,',','.') }}
+                </td>
+            </tr>
+            <tr>
+                <td class="text-red-600 font-semibold">Pengeluaran</td>
+                <td class="text-right text-red-600 font-semibold">
+                    Rp {{ number_format($inventarisPengeluaran,0,',','.') }}
+                </td>
+            </tr>
+            <tr class="border-t">
+                <td class="text-blue-600 font-bold">Saldo</td>
+                <td class="text-right text-blue-600 font-bold">
+                    Rp {{ number_format($inventarisSaldo,0,',','.') }}
+                </td>
+            </tr>
         </table>
     </div>
-    </div>  
 
-    {{-- SOSIAL --}}
-    <div class="relative">
-        <h3 class="text-xl font-bold text-[#111827] mb-3">Sosial</h3>
-    <div class="overflow-x-auto rounded-2xl">
-        <table class="min-w-[1100px] w-full bg-white">
-            <thead class="bg-[#111827] text-white text-sm">
-                <tr>
-                    <th class="p-2 text-center">Pemasukan</th>
-                    <th class="p-2 text-center">Pengeluaran</th>
-                    <th class="p-2 text-center">Saldo</th>
-                </tr>
-            </thead>
-            <tbody class="text-sm">
-                <tr
-                    class="border-b hover:bg-gray-50">
-                    <td class="p-3 text-xl font-bold text-center whitespace-nowrap text-green-600">
-                        Rp {{ number_format($sosialPemasukan, 0, ',', '.') }}
-                    </td>
-                    <td class="p-3 text-xl font-bold text-center whitespace-nowrap text-red-600">
-                        Rp {{ number_format($sosialPengeluaran, 0, ',', '.') }}
-                    </td>
-                    <td class="p-3 text-xl font-bold text-center whitespace-nowrap text-blue-600">
-                        Rp {{ number_format($sosialSaldo, 0, ',', '.') }}
-                    </td>
-                </tr>
-            </tbody>
+    {{-- ======================
+    SOSIAL
+    ====================== --}}
+    <div class="bg-white rounded-2xl p-5 shadow">
+        <h3 class="text-xl font-bold mb-3">SOSIAL</h3>
+        <div class="relative h-80 flex items-center justify-center">
+            <canvas id="sosialChart"></canvas>
+        </div>
+
+        <table class="w-full text-sm mt-4">
+            <tr>
+                <td class="text-green-600 font-semibold">Pemasukan</td>
+                <td class="text-right text-green-600 font-semibold">
+                    Rp {{ number_format($sosialPemasukan,0,',','.') }}
+                </td>
+            </tr>
+            <tr>
+                <td class="text-red-600 font-semibold">Pengeluaran</td>
+                <td class="text-right text-red-600 font-semibold">
+                    Rp {{ number_format($sosialPengeluaran,0,',','.') }}
+                </td>
+            </tr>
+            <tr class="border-t">
+                <td class="text-blue-600 font-bold">Saldo</td>
+                <td class="text-right text-blue-600 font-bold">
+                    Rp {{ number_format($sosialSaldo,0,',','.') }}
+                </td>
+            </tr>
         </table>
     </div>
-    </div> 
 
- 
+    </div>
+
+    <script>
+        /* AUTO SUBMIT */
+        const form = document.getElementById('filterForm');
+        const bulanSelect = document.getElementById('filterBulan');
+        const tahunSelect = document.getElementById('filterTahun');
+
+        bulanSelect.addEventListener('change', () => form.submit());
+        tahunSelect.addEventListener('change', () => form.submit());
+
+        /* CHART */
+        const pie = (canvasId, masuk, keluar) => {
+            const ctx = document.getElementById(canvasId);
+            if (!ctx) return;
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Pemasukan', 'Pengeluaran'],
+                    datasets: [{
+                        data: [masuk, keluar],
+                        backgroundColor: ['#16a34a', '#dc2626']
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        };
+
+        pie('kasChart', {{ $kasPemasukan }}, {{ $kasPengeluaran }});
+        pie('inventarisChart', {{ $inventarisPemasukan }}, {{ $inventarisPengeluaran }});
+        pie('sosialChart', {{ $sosialPemasukan }}, {{ $sosialPengeluaran }});
+    </script>
+
+</div>
+
 @endsection

@@ -78,13 +78,11 @@
             <th>Subjek</th>
             <th>Pemasukan</th>
             <th>Pengeluaran</th>
-            <th>Saldo</th>
         </tr>
     </thead>
 
     <tbody>
         @php
-            $saldo = 0;
             $totalPemasukan = 0;
             $totalPengeluaran = 0;
         @endphp
@@ -94,7 +92,6 @@
                 $pemasukan = $item->pemasukan ?? 0;
                 $pengeluaran = $item->pengeluaran ?? 0;
 
-                $saldo += $pemasukan - $pengeluaran;
                 $totalPemasukan += $pemasukan;
                 $totalPengeluaran += $pengeluaran;
             @endphp
@@ -114,24 +111,24 @@
                 <td style="text-align:right">
                     Rp {{ number_format($pengeluaran,0,',','.') }}
                 </td>
-                <td style="text-align:right">
-                    Rp {{ number_format($saldo,0,',','.') }}
-                </td>
             </tr>
         @endforeach
 
-        <!-- TOTAL -->
-        <tr class="total-row" style="font-weight: bold;">
-            <td colspan="4" style="text-align:center;">
-                TOTAL
-            </td>
+        <!-- TOTAL PEMASUKAN & PENGELUARAN -->
+        <tr style="font-weight:bold;">
+            <td colspan="4" style="text-align:center;">TOTAL</td>
             <td style="text-align:right;">
                 Rp {{ number_format($totalPemasukan,0,',','.') }}
             </td>
             <td style="text-align:right;">
                 Rp {{ number_format($totalPengeluaran,0,',','.') }}
             </td>
-            <td style="text-align:right;">
+        </tr>
+
+        <!-- SALDO AKHIR -->
+        <tr style="font-weight:bold;">
+            <td colspan="4" style="text-align:center;">SALDO</td>
+            <td colspan="2" style="text-align:right;">
                 Rp {{ number_format($totalPemasukan - $totalPengeluaran,0,',','.') }}
             </td>
         </tr>

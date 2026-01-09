@@ -20,31 +20,31 @@ const Tentang = () => {
       <div className='flex flex-col md:flex-row items-center md:items-start md:gap-10'>
         <img src={assets.logo_prasojoo} alt="" className='w-full sm:w-1/2 max-w-lg md:ml-30'/>
         <div className='flex flex-col items-center md:items-start mt-3 text-[#111827]'>
-          <div className='grid grid-cols-2 md:gap-6 w-full 2xl'>
+          <div className='grid grid-cols-2 md:gap-8 w-full 2xl'>
             <div>
               <div className="flex items-baseline gap-1">
-                <p className="text-3xl font-medium text-[#111827]">35</p>
+                <p className="text-2xl font-medium text-[#111827]">35</p>
                 <span className="text-l text-[#111827]">Anggota</span>
               </div>
               <p className="text-l font-bold text-[#111827]">Pokja Bagor</p>
             </div>
-            <div>
+            <div className="pl-6">
               <div className="flex items-baseline gap-1">
-                <p className="text-3xl font-medium text-[#111827]">15</p>
+                <p className="text-2xl font-medium text-[#111827]">15</p>
                 <span className="text-l text-[#111827]">Anggota</span>
               </div>
               <p className="text-l font-bold text-[#111827]">Pokja Kamongan</p>
             </div>
             <div>
               <div className="flex items-baseline gap-1">
-                <p className="text-3xl font-medium text-[#111827]">14</p>
+                <p className="text-2xl font-medium text-[#111827]">14</p>
                 <span className="text-l text-[#111827]">Anggota</span>
               </div>
               <p className="text-l font-bold text-[#111827]">Pokja Juwiring Pasar</p>
             </div>
-            <div>
+            <div className="pl-6">
               <div className="flex items-baseline gap-1">
-                <p className="text-3xl font-medium text-[#111827]">18</p>
+                <p className="text-2xl font-medium text-[#111827]">18</p>
                 <span className="text-l text-[#111827]">Anggota</span>
               </div>
               <p className="text-l font-bold text-[#111827]">Pokja Winong</p>
@@ -61,7 +61,7 @@ const Tentang = () => {
         
           <div className="flex justify-end">
             <button
-              className="text-white bg-[#111827] font-bold px-4 py-3 rounded transition hover:bg-[#ffa725] hover:text-[#111827]"
+              className="text-white bg-[#111827] font-bold px-3 py-2 rounded transition hover:bg-[#ffa725] hover:text-[#111827]"
               onClick={() => navigate('/tentang-detail')}
             >
               Selengkapnya

@@ -1,46 +1,61 @@
-<aside class="w-60 h-screen bg-[#111827] p-6 fixed left-0 top-0">
-    <img 
-        src="{{ asset('logo_prasojo.png') }}" 
-        alt="PRASOJO Logo" 
-        class="w-60 mt-6 mb-24 mx-auto block"
-    />
+<aside  
+    id="sidebar"
+    class="fixed left-0 top-0 z-50 h-screen w-60 bg-[#111827] p-6
+           transform -translate-x-full transition-transform duration-300"
+>
+    <img src="{{ asset('logo_prasojo.png') }}" class="w-52 mt-3 mb-24 mx-auto">
 
-    <nav class="space-y-8">
-        {{-- MENU UMUM (SEMUA ROLE) --}}
-        <a href="{{ route('dashboard') }}" 
-           class="block px-3 py-2 rounded-lg 
-           {{ request()->is('dashboard') ? 'bg-white text-[#111827] text-xl font-bold' : 'text-xl font-bold text-white hover:bg-gray-500' }}">
+    <nav class="space-y-6">
+
+        <a href="{{ route('dashboard') }}"
+           class="block px-3 py-2 text-xl font-bold rounded
+           {{ request()->routeIs('dashboard') 
+                ? 'bg-gray-200 text-[#111827]' 
+                : 'text-white hover:bg-gray-600' }}">
             🏠 DASHBOARD
         </a>
-        <a href="{{ route('kas') }}" 
-           class="block px-3 py-2 rounded-lg 
-           {{ request()->is('kas') ? 'bg-white text-[#111827] text-xl font-bold' : 'text-xl font-bold text-white hover:bg-gray-500' }}">
+
+        <a href="{{ route('kas') }}"
+           class="block px-3 py-2 text-xl font-bold rounded
+           {{ request()->routeIs('kas') 
+                ? 'bg-gray-200 text-[#111827]' 
+                : 'text-white hover:bg-gray-600' }}">
             💰 KAS
         </a>
-        <a href="{{ route('inventaris') }}" 
-           class="block px-3 py-2 rounded-lg 
-           {{ request()->is('inventaris') ? 'bg-white text-[#111827] text-xl font-bold' : 'text-xl font-bold text-white hover:bg-gray-500' }}">
+
+        <a href="{{ route('inventaris') }}"
+           class="block px-3 py-2 text-xl font-bold rounded
+           {{ request()->routeIs('inventaris') 
+                ? 'bg-gray-200 text-[#111827]' 
+                : 'text-white hover:bg-gray-600' }}">
             💸 INVENTARIS
         </a>
-        <a href="{{ route('sosial') }}" 
-           class="block px-3 py-2 rounded-lg 
-           {{ request()->is('sosial') ? 'bg-white text-[#111827] text-xl font-bold' : 'text-xl font-bold text-white hover:bg-gray-500' }}">
+
+        <a href="{{ route('sosial') }}"
+           class="block px-3 py-2 text-xl font-bold rounded
+           {{ request()->routeIs('sosial') 
+                ? 'bg-gray-200 text-[#111827]' 
+                : 'text-white hover:bg-gray-600' }}">
             🪙 SOSIAL
         </a>
 
-        {{-- MENU KHUSUS ADMIN --}}
         @if(auth()->user()->role === 'admin')
-            <a href="{{ route('kegiatan') }}" 
-               class="block px-3 py-2 rounded-lg 
-               {{ request()->is('kegiatan') ? 'bg-white text-[#111827] text-xl font-bold' : 'text-xl font-bold text-white hover:bg-gray-500' }}">
+            <a href="{{ route('kegiatan') }}"
+               class="block px-3 py-2 text-xl font-bold rounded
+               {{ request()->routeIs('kegiatan') 
+                    ? 'bg-gray-200 text-[#111827]' 
+                    : 'text-white hover:bg-gray-600' }}">
                 📝 KEGIATAN
             </a>
 
             <a href="{{ route('hakAkses') }}"
-               class="block px-3 py-2 rounded-lg
-               {{ request()->is('hak-akses') ? 'bg-white text-[#111827] text-xl font-bold' : 'text-xl font-bold text-white hover:bg-gray-500' }}">
-               🔐 HAK AKSES
+               class="block px-3 py-2 text-xl font-bold rounded
+               {{ request()->routeIs('hakAkses') 
+                    ? 'bg-gray-200 text-[#111827]' 
+                    : 'text-white hover:bg-gray-600' }}">
+                🔐 HAK AKSES
             </a>
         @endif
+
     </nav>
 </aside>

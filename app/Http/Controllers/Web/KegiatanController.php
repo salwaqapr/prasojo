@@ -12,8 +12,8 @@ class KegiatanController extends Controller
     // ADMIN (BLADE)
     public function index()
     {
-        $kegiatan = Kegiatan::orderBy('id', 'asc')->get();
-        return view('pages.kegiatan', compact('kegiatan'), ['pageTitle'=>'Kas']);
+        $kegiatan = Kegiatan::orderBy('id', 'desc')->get();
+        return view('pages.kegiatan', compact('kegiatan'), ['pageTitle'=>'Kegiatan']);
     }
 
     public function store(Request $request)

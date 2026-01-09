@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { assets } from '../assets/assets';
-import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation, NavLink } from "react-router-dom";
 
 const Navbar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -23,7 +22,7 @@ const Navbar = () => {
     <div>
       {/* Navbar */}
       <div className="fixed top-0 left-0 w-full z-50 bg-[#111827]">
-        <div className="container mx-auto flex justify-between items-center py-4 px-6 md:px-20 lg:px-32">
+        <div className="container mx-auto flex justify-between items-center py-4 px-4 md:px-10 lg:px-2">
           
           {/* Logo */}
           <Link 
@@ -72,7 +71,7 @@ const Navbar = () => {
       >
         {/* Panel */}
         <div className="absolute top-0 right-0 w-3/4 h-full bg-white shadow-lg p-6 flex flex-col">
-          <div className="flex justify-end cursor-pointer mb-6">
+          <div className="flex justify-end cursor-pointer mb-16">
             <img
               onClick={() => setShowMobileMenu(false)}
               src={assets.cross_icon}
@@ -83,11 +82,57 @@ const Navbar = () => {
 
           {/* Mobile Menu */}
           <ul className="flex flex-col gap-4 text-lg font-medium text-[#111827]">
-            <Link onClick={() => setShowMobileMenu(false)} to="/" className="px-4 py-2">Beranda</Link>
-            <Link onClick={() => setShowMobileMenu(false)} to="/tentang-detail" className="px-4 py-2">Tentang</Link>
-            <Link onClick={() => setShowMobileMenu(false)} to="/kegiatan-detail" className="px-4 py-2">Kegiatan</Link>
-            <a onClick={() => setShowMobileMenu(false)} href="http://127.0.0.1:8000/login" className="px-4 py-2">Login</a>
+            <NavLink
+              to="/"
+              onClick={() => setShowMobileMenu(false)}
+              className={({ isActive }) =>
+                `font-bold px-4 py-2 rounded ${
+                  isActive
+                    ? "bg-[#111827] font-bold text-white"
+                    : "text-[#111827]"
+                }`
+              }
+            >
+              Beranda
+            </NavLink>
+
+            <NavLink
+              to="/tentang-detail"
+              onClick={() => setShowMobileMenu(false)}
+              className={({ isActive }) =>
+                `font-bold px-4 py-2 rounded ${
+                  isActive
+                    ? "bg-[#111827] font-bold text-white"
+                    : "text-[#111827]"
+                }`
+              }
+            >
+              Tentang
+            </NavLink>
+
+            <NavLink
+              to="/kegiatan-detail"
+              onClick={() => setShowMobileMenu(false)}
+              className={({ isActive }) =>
+                `font-bold px-4 py-2 rounded ${
+                  isActive
+                    ? "bg-[#111827] font-bold text-white"
+                    : "text-[#111827]"
+                }`
+              }
+            >
+              Kegiatan
+            </NavLink>
+
+            <a
+              href="http://127.0.0.1:8000/login"
+              onClick={() => setShowMobileMenu(false)}
+              className="font-bold px-4 py-2 text-[#111827]"
+            >
+              Login
+            </a>
           </ul>
+
         </div>
       </div>
     </div>
@@ -95,3 +140,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

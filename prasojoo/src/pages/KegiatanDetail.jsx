@@ -76,7 +76,7 @@ const KegiatanDetail = () => {
 
 
   return (
-    <div className="mx-auto px-10 w-full min-h-screen bg-white">
+    <div className="mx-auto px-4 w-full min-h-screen bg-white">
       <Navbar />
 
       <div className="mt-10"></div>
@@ -99,19 +99,22 @@ const KegiatanDetail = () => {
         {/* GRID KEGIATAN */}
         <div
           ref={sliderRef}
-          className="mt-4 grid gap-10"
-          style={{
-            gridTemplateColumns: `repeat(${cardsToShow}, minmax(0, 1fr))`,
-          }}
+          className="
+            mt-4 grid gap-6
+            grid-cols-1
+            sm:grid-cols-2
+            md:grid-cols-3
+            lg:grid-cols-4
+          "
         >
           {data.map((item) => (
             <div
               key={item.id}
               className="
-                bg-white rounded-lg p-4
+                bg-white rounded-lg p-3 sm:p-4
                 transition-all duration-300 ease-in-out
                 hover:-translate-y-3
-                shadow-[0_0_25px_rgba(0,0,0,0.15)]
+                shadow-[0_0_20px_rgba(0,0,0,0.12)]
                 hover:shadow-[0_0_40px_rgba(0,0,0,0.25)]
               "
             >
@@ -123,13 +126,13 @@ const KegiatanDetail = () => {
                   src={`http://localhost:8000/storage/${item.foto}`}
                   alt={item.judul}
                   onLoad={handleImageLoad}
-                  className="w-full h-full"
+                  className="w-full h-full object-cover"
                 />
 
               </div>
 
               <div className="px-1.5 mt-3">
-                <h2 className="text-xl font-semibold text-gray-800">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
                   {item.judul}
                 </h2>
 
@@ -143,7 +146,7 @@ const KegiatanDetail = () => {
                   )}
                 </p>
 
-                <p className="text-gray-600 text-sm mt-3 leading-relaxed text-justify">
+                <p className="text-gray-600 text-sm sm:text-base mt-3 leading-relaxed text-justify">
                   {item.deskripsi}
                 </p>
               </div>

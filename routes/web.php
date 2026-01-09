@@ -23,6 +23,7 @@ Route::post('/logout', [AuthController::class, 'logoutWeb'])->name('logout');
 
 // Dashboard
 Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+Route::get('/dashboard-keuangan', [DashboardController::class, 'keuangan'])->name('dashboard.keuangan');
 
 
 // KAS

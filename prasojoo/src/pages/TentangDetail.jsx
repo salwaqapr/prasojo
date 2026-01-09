@@ -33,7 +33,7 @@ const TentangDetail = () => {
           className="w-full sm:w-1/2 max-w-lg mb-8"
         />
 
-        <div className="text-[20px] text-[#111827] max-w-6xl px-4 sm:px-6 md:px-8 space-y-6 leading-relaxed text-justify">
+        <div className="text-l text-[#111827] max-w-6xl px-4 sm:px-6 md:px-8 space-y-6 leading-relaxed text-justify">
 
           <p>
             Paguyuban Pemuda Prasojo, atau yang akrab disebut Prasojo, merupakan organisasi kepemudaan 

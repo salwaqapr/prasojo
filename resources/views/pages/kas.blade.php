@@ -62,7 +62,8 @@
             @if($canManage)
             <div class="flex flex-col gap-2 sm:flex-row sm:justify-end lg:flex-row lg:items-center">
                 <a href="{{ route('kas.pdf') }}"
-                   class="inline-flex items-center justify-center gap-2
+                    id="btnUnduhPdf"
+                    class="inline-flex items-center justify-center gap-2
                           bg-blue-700 text-white px-2 py-1 rounded
                           hover:bg-blue-800 transition
                           w-full sm:w-auto">
@@ -325,6 +326,32 @@ document.querySelectorAll('.rupiah-only').forEach(i=>{
     });
 });
 
+/* =========================
+   UNDUH PDF
+========================= */
+function updatePdfLink() {
+    const keyword  = searchInput.value;
+    const bulanVal = filterBulan.value;
+    const tahunVal = filterTahun.value;
+
+    const params = new URLSearchParams();
+
+    if (keyword)  params.append("search", keyword);
+    if (bulanVal !== "") params.append("bulan", bulanVal);
+    if (tahunVal !== "") params.append("tahun", tahunVal);
+
+    const baseUrl = document.getElementById("btnUnduhPdf").dataset.base
+        || document.getElementById("btnUnduhPdf").href.split("?")[0];
+
+    document.getElementById("btnUnduhPdf").href =
+        params.toString()
+            ? `${baseUrl}?${params.toString()}`
+            : baseUrl;
+}
+
+/* =========================
+   NOTIFIKASI
+========================= */
 function showNotif(message) {
     const modal = document.getElementById("modalNotif");
     const msgEl = document.getElementById("notifMessage");
@@ -529,33 +556,22 @@ document.getElementById("sortTanggal")
     });
 
 /* =========================
-   SEARCH
-========================= */
-document.getElementById("searchSubjek").addEventListener("input", function () {
-    const keyword = this.value.toLowerCase();
-    const rows = document.querySelectorAll("#kasTable tr");
-
-    rows.forEach(row => {
-        const subjek = row.children[3].innerText.toLowerCase();
-        row.style.display = subjek.includes(keyword) ? "" : "none";
-    });
-
-    resetNomor();
-    hitungTotalVisible();
-});
-
-/* =========================
-   FILTER BULAN & TAHUN
+   SEARCH, BULAN, TAHUN
 ========================= */
 const bulanNama = [
     "Januari","Februari","Maret","April","Mei","Juni",
     "Juli","Agustus","September","Oktober","November","Desember"
 ];
 
+const searchInput = document.getElementById("searchSubjek");
 const filterBulan = document.getElementById("filterBulan");
 const filterTahun = document.getElementById("filterTahun");
 
-let dataTanggal = []; // { bulan, tahun }
+let dataTanggal = [];
+
+/* =========================
+   KUMPULKAN DATA TANGGAL
+========================= */
 function collectTanggalData() {
     dataTanggal = [];
     const rows = document.querySelectorAll("#kasTable tr");
@@ -574,96 +590,141 @@ function collectTanggalData() {
     });
 }
 
+function getFilteredDataForDropdown(mode) {
+    const keyword  = searchInput.value.toLowerCase();
+    const bulanVal = filterBulan.value;
+    const tahunVal = filterTahun.value;
+
+    const result = [];
+
+    document.querySelectorAll("#kasTable tr").forEach(row => {
+        const subjek = row.children[3]?.innerText.toLowerCase() || "";
+        if (keyword && !subjek.includes(keyword)) return;
+
+        const teks = row.children[2]?.innerText.trim();
+        if (!teks) return;
+
+        const [, mm, yyyy] = teks.split("-");
+        const bulan = parseInt(mm, 10) - 1;
+
+        // ⚠️ ATURAN PENTING
+        if (mode === "bulan" && tahunVal !== "" && yyyy != tahunVal) return;
+        if (mode === "tahun" && bulanVal !== "" && bulan != bulanVal) return;
+
+        result.push({ bulan, tahun: yyyy });
+    });
+
+    return result;
+}
+
+
+/* =========================
+   RENDER DROPDOWN BULAN & TAHUN
+========================= */
 function renderFilters() {
     const bulanTerpilih = filterBulan.value;
     const tahunTerpilih = filterTahun.value;
 
+    /* ===== DATA UNTUK DROPDOWN ===== */
+    const dataBulan = getFilteredDataForDropdown("bulan");
+    const dataTahun = getFilteredDataForDropdown("tahun");
+
     const bulanSet = new Set();
     const tahunSet = new Set();
 
-    dataTanggal.forEach(d => {
-        if (tahunTerpilih === "" || d.tahun == tahunTerpilih) {
-            bulanSet.add(d.bulan);
-        }
-        if (bulanTerpilih === "" || d.bulan == bulanTerpilih) {
-            tahunSet.add(d.tahun);
-        }
-    });
+    dataBulan.forEach(d => bulanSet.add(d.bulan));
+    dataTahun.forEach(d => tahunSet.add(d.tahun));
 
-    // ===== BULAN =====
+    /* ===== BULAN ===== */
     filterBulan.innerHTML = "";
 
     const optSemuaBulan = document.createElement("option");
     optSemuaBulan.value = "";
     optSemuaBulan.textContent = "Semua Bulan";
-    optSemuaBulan.selected = bulanTerpilih === "";
     filterBulan.appendChild(optSemuaBulan);
 
     [...bulanSet].sort((a,b)=>a-b).forEach(b => {
         const opt = document.createElement("option");
         opt.value = b;
         opt.textContent = bulanNama[b];
-        opt.selected = String(b) === String(bulanTerpilih);
+        if (String(b) === String(bulanTerpilih)) opt.selected = true;
         filterBulan.appendChild(opt);
     });
 
-    // ===== TAHUN =====
+    /* ===== TAHUN ===== */
     filterTahun.innerHTML = "";
 
     const optSemuaTahun = document.createElement("option");
     optSemuaTahun.value = "";
     optSemuaTahun.textContent = "Semua Tahun";
-    optSemuaTahun.selected = tahunTerpilih === "";
     filterTahun.appendChild(optSemuaTahun);
 
     [...tahunSet].sort().forEach(t => {
         const opt = document.createElement("option");
         opt.value = t;
         opt.textContent = t;
-        opt.selected = String(t) === String(tahunTerpilih);
+        if (String(t) === String(tahunTerpilih)) opt.selected = true;
         filterTahun.appendChild(opt);
     });
 }
 
-function applyFilter() {
-    const rows = document.querySelectorAll("#kasTable tr");
+
+/* =========================
+   FILTER UTAMA (FINAL)
+========================= */
+function applyAllFilter() {
+    const keyword  = searchInput.value.toLowerCase();
     const bulanVal = filterBulan.value;
     const tahunVal = filterTahun.value;
 
-    rows.forEach(row => {
-        const teksTanggal = row.children[2]?.innerText.trim();
-        if (!teksTanggal) return;
+    document.querySelectorAll("#kasTable tr").forEach(row => {
+        const subjek = row.children[3]?.innerText.toLowerCase() || "";
+        const cocokSearch = keyword === "" || subjek.includes(keyword);
 
-        const [, mm, yyyy] = teksTanggal.split("-");
+        const teks = row.children[2]?.innerText.trim();
+        if (!teks) return row.style.display = "none";
+
+        const [, mm, yyyy] = teks.split("-");
         const bulan = parseInt(mm, 10) - 1;
 
         const cocokBulan = bulanVal === "" || bulan == bulanVal;
         const cocokTahun = tahunVal === "" || yyyy == tahunVal;
 
-        row.style.display = cocokBulan && cocokTahun ? "" : "none";
+        row.style.display =
+            cocokSearch && cocokBulan && cocokTahun ? "" : "none";
     });
 
     resetNomor();
     hitungTotalVisible();
 }
 
+/* =========================
+   EVENT
+========================= */
+searchInput.addEventListener("input", () => {
+    renderFilters();
+    applyAllFilter();
+    updatePdfLink();
+});
 filterBulan.addEventListener("change", () => {
     renderFilters();
-    applyFilter();
+    applyAllFilter();
+    updatePdfLink();
 });
 filterTahun.addEventListener("change", () => {
     renderFilters();
-    applyFilter();
+    applyAllFilter();
+    updatePdfLink();
 });
 
+/* =========================
+   INIT
+========================= */
 document.addEventListener("DOMContentLoaded", () => {
     collectTanggalData();
     renderFilters();
-
-    filterBulan.value = "";   // ← paksa semua bulan
-    filterTahun.value = "";
-
-    applyFilter();
+    applyAllFilter();
+    updatePdfLink();
 });
 
 /*=============

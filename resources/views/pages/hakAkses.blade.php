@@ -83,7 +83,7 @@
                 </tr>
             </thead>
 
-            <tbody class="text-sm">
+            <tbody class="text-sm" id="hakAksesTable">
                 @foreach ($users as $i => $u)
                 <tr data-id="{{ $u->id }}" class="border-b hover:bg-gray-50">
 
@@ -312,6 +312,9 @@ function togglePassword() {
     }
 }
 
+/* =========================
+   NOTIFIKASI
+========================= */
 function showNotif(message) {
     const modal = document.getElementById("modalNotif");
     const msgEl = document.getElementById("notifMessage");
@@ -472,25 +475,33 @@ hapusYa.onclick = async () => {
     }
 };
 
-
 /* =========================
-   SEARCH
+   RESET NOMOR
 ========================= */
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("searchNama").addEventListener("input", function () {
-        const keyword = this.value.toLowerCase();
-        const rows = document.querySelectorAll("tbody tr");
-
-        rows.forEach(row => {
-            const kolomNama = row.children[2]?.innerText.toLowerCase() || "";
-            const kolomEmail = row.children[3]?.innerText.toLowerCase() || "";
-            const kolomUsername = row.children[4]?.innerText.toLowerCase() || "";
-
-            const gabungan = kolomNama + " " + kolomEmail + " " + kolomUsername;
-            row.style.display = gabungan.includes(keyword) ? "" : "none";
-        });
+function resetNomor() {
+    let no = 1;
+    document.querySelectorAll("#hakAksesTable tr").forEach(row => {
+        if (row.style.display === "none") return;
+        row.children[0].innerText = no++;
     });
+}
+
+document.getElementById("searchNama").addEventListener("input", function () {
+    const keyword = this.value.toLowerCase();
+    const rows = document.querySelectorAll("tbody tr");
+
+    rows.forEach(row => {
+        const kolomNama = row.children[2]?.innerText.toLowerCase() || "";
+        const kolomEmail = row.children[3]?.innerText.toLowerCase() || "";
+        const kolomUsername = row.children[4]?.innerText.toLowerCase() || "";
+
+        const gabungan = kolomNama + " " + kolomEmail + " " + kolomUsername;
+        row.style.display = gabungan.includes(keyword) ? "" : "none";
+    });
+
+    resetNomor(); // ✅ WAJIB
 });
+
 
 
 </script>

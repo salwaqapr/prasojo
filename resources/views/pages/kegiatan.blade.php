@@ -27,7 +27,7 @@
                     <input
                         type="search"
                         id="searchJudulDeskripsi"
-                        placeholder="Cari Judul dan Deskripsi"
+                        placeholder="Cari Judul atau Deskripsi"
                         class="border px-2 py-1 pl-8 rounded-lg text-sm w-full
                             focus:outline-none focus:ring-2 focus:ring-gray-300"
                     />
@@ -254,6 +254,9 @@ function kosongkanForm(){
     fotoPreview.innerHTML = "";
 }
 
+/* =========================
+   NOTIFIKASI
+========================= */
 function showNotif(message) {
     const modal = document.getElementById("modalNotif");
     const msgEl = document.getElementById("notifMessage");
@@ -480,35 +483,22 @@ document.getElementById("sortTanggal")
     });
 
 /* =========================
-SEARCH
-========================= */
-document.getElementById("searchJudulDeskripsi").addEventListener("input", function () {
-    const keyword = this.value.toLowerCase();
-    const rows = document.querySelectorAll("tbody tr");
-    
-    rows.forEach(row => {
-        const Judul = row.children[3]?.innerText.toLowerCase() || "";
-        const Deskripsi = row.children[4]?.innerText.toLowerCase() || "";
-        const gabungan = Judul + " " + Deskripsi;
-        row.style.display = gabungan.includes(keyword) ? "" : "none";
-    });
-
-    resetNomor();
-    hitungTotalVisible();
-});
-
-/* =========================
-   FILTER BULAN & TAHUN
+   SEARCH, BULAN, TAHUN
 ========================= */
 const bulanNama = [
     "Januari","Februari","Maret","April","Mei","Juni",
     "Juli","Agustus","September","Oktober","November","Desember"
 ];
 
+const searchInput = document.getElementById("searchJudulDeskripsi");
 const filterBulan = document.getElementById("filterBulan");
 const filterTahun = document.getElementById("filterTahun");
 
-let dataTanggal = []; // { bulan, tahun }
+let dataTanggal = [];
+
+/* =========================
+   KUMPULKAN DATA TANGGAL
+========================= */
 function collectTanggalData() {
     dataTanggal = [];
     const rows = document.querySelectorAll("#kegiatanTable tr");
@@ -527,96 +517,141 @@ function collectTanggalData() {
     });
 }
 
+function getFilteredDataForDropdown(mode) {
+    const keyword  = searchInput.value.toLowerCase();
+    const bulanVal = filterBulan.value;
+    const tahunVal = filterTahun.value;
+
+    const result = [];
+
+    document.querySelectorAll("#kegiatanTable tr").forEach(row => {
+        const Judul = row.children[3]?.innerText.toLowerCase() || "";
+        const Deskripsi = row.children[4]?.innerText.toLowerCase() || "";
+        const gabungan = Judul + " " + Deskripsi;
+        row.style.display = gabungan.includes(keyword) ? "" : "none";
+        if (keyword && !gabungan.includes(keyword)) return;
+
+        const teks = row.children[2]?.innerText.trim();
+        if (!teks) return;
+
+        const [, mm, yyyy] = teks.split("-");
+        const bulan = parseInt(mm, 10) - 1;
+
+        // ⚠️ ATURAN PENTING
+        if (mode === "bulan" && tahunVal !== "" && yyyy != tahunVal) return;
+        if (mode === "tahun" && bulanVal !== "" && bulan != bulanVal) return;
+
+        result.push({ bulan, tahun: yyyy });
+    });
+
+    return result;
+}
+
+/* =========================
+   RENDER DROPDOWN BULAN & TAHUN
+========================= */
 function renderFilters() {
     const bulanTerpilih = filterBulan.value;
     const tahunTerpilih = filterTahun.value;
 
+    /* ===== DATA UNTUK DROPDOWN ===== */
+    const dataBulan = getFilteredDataForDropdown("bulan");
+    const dataTahun = getFilteredDataForDropdown("tahun");
+
     const bulanSet = new Set();
     const tahunSet = new Set();
 
-    dataTanggal.forEach(d => {
-        if (tahunTerpilih === "" || d.tahun == tahunTerpilih) {
-            bulanSet.add(d.bulan);
-        }
-        if (bulanTerpilih === "" || d.bulan == bulanTerpilih) {
-            tahunSet.add(d.tahun);
-        }
-    });
+    dataBulan.forEach(d => bulanSet.add(d.bulan));
+    dataTahun.forEach(d => tahunSet.add(d.tahun));
 
-    // ===== BULAN =====
+    /* ===== BULAN ===== */
     filterBulan.innerHTML = "";
 
     const optSemuaBulan = document.createElement("option");
     optSemuaBulan.value = "";
     optSemuaBulan.textContent = "Semua Bulan";
-    optSemuaBulan.selected = bulanTerpilih === "";
     filterBulan.appendChild(optSemuaBulan);
 
     [...bulanSet].sort((a,b)=>a-b).forEach(b => {
         const opt = document.createElement("option");
         opt.value = b;
         opt.textContent = bulanNama[b];
-        opt.selected = String(b) === String(bulanTerpilih);
+        if (String(b) === String(bulanTerpilih)) opt.selected = true;
         filterBulan.appendChild(opt);
     });
 
-    // ===== TAHUN =====
+    /* ===== TAHUN ===== */
     filterTahun.innerHTML = "";
 
     const optSemuaTahun = document.createElement("option");
     optSemuaTahun.value = "";
     optSemuaTahun.textContent = "Semua Tahun";
-    optSemuaTahun.selected = tahunTerpilih === "";
     filterTahun.appendChild(optSemuaTahun);
 
     [...tahunSet].sort().forEach(t => {
         const opt = document.createElement("option");
         opt.value = t;
         opt.textContent = t;
-        opt.selected = String(t) === String(tahunTerpilih);
+        if (String(t) === String(tahunTerpilih)) opt.selected = true;
         filterTahun.appendChild(opt);
     });
 }
 
-function applyFilter() {
-    const rows = document.querySelectorAll("#kegiatanTable tr");
+/* =========================
+   FILTER UTAMA (FINAL)
+========================= */
+function applyAllFilter() {
+    const keyword  = searchInput.value.toLowerCase();
     const bulanVal = filterBulan.value;
     const tahunVal = filterTahun.value;
 
-    rows.forEach(row => {
-        const teksTanggal = row.children[2]?.innerText.trim();
-        if (!teksTanggal) return;
+    document.querySelectorAll("#kegiatanTable tr").forEach(row => {
+        const Judul = row.children[3]?.innerText.toLowerCase() || "";
+        const Deskripsi = row.children[4]?.innerText.toLowerCase() || "";
+        const gabungan = Judul + " " + Deskripsi;
+        row.style.display = gabungan.includes(keyword) ? "" : "none";
+        const cocokSearch = keyword === "" || gabungan.includes(keyword);
 
-        const [, mm, yyyy] = teksTanggal.split("-");
+        const teks = row.children[2]?.innerText.trim();
+        if (!teks) return row.style.display = "none";
+
+        const [, mm, yyyy] = teks.split("-");
         const bulan = parseInt(mm, 10) - 1;
 
         const cocokBulan = bulanVal === "" || bulan == bulanVal;
         const cocokTahun = tahunVal === "" || yyyy == tahunVal;
 
-        row.style.display = cocokBulan && cocokTahun ? "" : "none";
+        row.style.display =
+            cocokSearch && cocokBulan && cocokTahun ? "" : "none";
     });
 
     resetNomor();
     hitungTotalVisible();
 }
 
+/* =========================
+   EVENT
+========================= */
+searchInput.addEventListener("input", () => {
+    renderFilters();
+    applyAllFilter();
+});
 filterBulan.addEventListener("change", () => {
     renderFilters();
-    applyFilter();
+    applyAllFilter();
 });
 filterTahun.addEventListener("change", () => {
     renderFilters();
-    applyFilter();
+    applyAllFilter();
 });
 
+/* =========================
+   INIT
+========================= */
 document.addEventListener("DOMContentLoaded", () => {
     collectTanggalData();
     renderFilters();
-
-    filterBulan.value = "";   // ← paksa semua bulan
-    filterTahun.value = "";
-
-    applyFilter();
+    applyAllFilter();
 });
 
 </script>

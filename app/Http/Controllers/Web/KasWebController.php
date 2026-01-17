@@ -64,13 +64,32 @@ class KasWebController extends Controller
         return response()->json(['message'=>'Data berhasil dihapus']);
     }
 
-    public function pdf()
+    public function pdf(Request $request)
     {
-        $data = Kas::orderBy('id')->get();
+        $query = Kas::query();
 
-        return Pdf::loadView('pdf.pdf', [
-            'data'  => $data,
-            'jenis' => 'kas'
-        ])->download('laporan-kas.pdf');
+        // SEARCH
+        if ($request->filled('search')) {
+            $query->where('subjek', 'like', '%' . $request->search . '%');
+        }
+
+        // TAHUN
+        if ($request->filled('tahun')) {
+            $query->whereYear('tanggal', $request->tahun);
+        }
+
+        // BULAN
+        if ($request->filled('bulan')) {
+            // bulan dari JS = 0–11 → +1
+            $query->whereMonth('tanggal', $request->bulan + 1);
+        }
+
+        $data = $query->orderBy('tanggal')->get();
+
+        return PDF::loadView('pdf.pdf', [
+        'data'  => $data,
+        'jenis' => 'kas'
+    ])->download('laporan-kas.pdf');
     }
+
 }

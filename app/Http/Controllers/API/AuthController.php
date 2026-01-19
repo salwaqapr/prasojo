@@ -18,7 +18,9 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)
+                    ->where('is_active', 1)
+                    ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
@@ -29,8 +31,9 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Login berhasil',
             'user' => $user
-        ]);
+        ], 200);
     }
+
 
     // WEB LOGIN (Blade)
     public function loginWeb(Request $request)

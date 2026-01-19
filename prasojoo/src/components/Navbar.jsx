@@ -46,7 +46,7 @@ const Navbar = () => {
 
           {/* Login Button */}
           <a 
-            href="http://127.0.0.1:8000/login"
+            href="http://localhost:5173/login"
             className="hidden md:block bg-white font-bold px-6 py-2 rounded text-[#111827] transition hover:bg-[#25ff48] hover:text-[#111827]"
           >
             Log In
@@ -125,7 +125,7 @@ const Navbar = () => {
             </NavLink>
 
             <a
-              href="http://127.0.0.1:8000/login"
+              href="http://localhost:5173/login"
               onClick={() => setShowMobileMenu(false)}
               className="font-bold px-4 py-2 text-[#111827]"
             >

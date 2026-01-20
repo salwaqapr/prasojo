@@ -9,24 +9,18 @@ use Illuminate\Support\Facades\Storage;
 
 class KegiatanController extends Controller
 {
-    // =====================
-    // LIST KEGIATAN
-    // =====================
     public function index(Request $request)
     {
         $query = Kegiatan::query();
 
-        // FILTER TANGGAL BULAN
         if ($request->bulan) {
             $query->whereMonth('tanggal', $request->bulan);
         }
 
-        // FILTER TAHUN
         if ($request->tahun) {
             $query->whereYear('tanggal', $request->tahun);
         }
 
-        // SEARCH JUDUL
         if ($request->search) {
             $query->where('judul', 'like', '%' . $request->search . '%');
         }
@@ -38,9 +32,6 @@ class KegiatanController extends Controller
         return response()->json($data);
     }
 
-    // =====================
-    // SIMPAN KEGIATAN
-    // =====================
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -50,21 +41,25 @@ class KegiatanController extends Controller
             'foto'      => 'required|image|max:2048'
         ]);
 
-        $foto = $request->file('foto')->store('kegiatan', 'public');
+        $file = $request->file('foto');
+
+        // ✅ simpan file pakai nama unik (aman)
+        $path = $file->store('kegiatan', 'public');
+
+        // ✅ simpan nama asli buat UI
+        $originalName = $file->getClientOriginalName();
 
         $kegiatan = Kegiatan::create([
-            'judul'     => $data['judul'],
-            'tanggal'   => $data['tanggal'],
-            'deskripsi' => $data['deskripsi'],
-            'foto'      => $foto,
+            'judul'         => $data['judul'],
+            'tanggal'       => $data['tanggal'],
+            'deskripsi'     => $data['deskripsi'],
+            'foto'          => $path,
+            'foto_original' => $originalName,
         ]);
 
         return response()->json($kegiatan, 201);
     }
 
-    // =====================
-    // UPDATE KEGIATAN
-    // =====================
     public function update(Request $request, $id)
     {
         $kegiatan = Kegiatan::findOrFail($id);
@@ -81,9 +76,17 @@ class KegiatanController extends Controller
         $kegiatan->deskripsi = $data['deskripsi'];
 
         if ($request->hasFile('foto')) {
-            // Hapus foto lama
-            Storage::disk('public')->delete($kegiatan->foto);
-            $kegiatan->foto = $request->file('foto')->store('kegiatan', 'public');
+            // hapus foto lama kalau ada
+            if ($kegiatan->foto) {
+                Storage::disk('public')->delete($kegiatan->foto);
+            }
+
+            $file = $request->file('foto');
+            $path = $file->store('kegiatan', 'public');
+            $originalName = $file->getClientOriginalName();
+
+            $kegiatan->foto = $path;
+            $kegiatan->foto_original = $originalName;
         }
 
         $kegiatan->save();
@@ -91,13 +94,14 @@ class KegiatanController extends Controller
         return response()->json($kegiatan);
     }
 
-    // =====================
-    // DELETE KEGIATAN
-    // =====================
     public function destroy($id)
     {
         $kegiatan = Kegiatan::findOrFail($id);
-        Storage::disk('public')->delete($kegiatan->foto);
+
+        if ($kegiatan->foto) {
+            Storage::disk('public')->delete($kegiatan->foto);
+        }
+
         $kegiatan->delete();
 
         return response()->json(['message' => 'Kegiatan deleted']);

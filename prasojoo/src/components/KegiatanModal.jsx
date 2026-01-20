@@ -3,16 +3,35 @@ import { API_BASE } from "../lib/api";
 
 const today = new Date().toISOString().split("T")[0];
 
+// ambil nama file dari path "kegiatan/beranda.png" => "beranda.png"
+const getBaseName = (path = "") => {
+  if (!path) return "";
+  const clean = String(path).split("?")[0]; // jaga-jaga kalau ada querystring
+  const parts = clean.split("/");
+  return parts[parts.length - 1] || "";
+};
+
 export default function KegiatanModal({ data, onClose, onSave }) {
   const [form, setForm] = useState({
     judul: "",
     tanggal: "",
     deskripsi: "",
-    foto: null,
+    foto: null, // File baru (kalau user pilih)
   });
+
   const [fotoPreview, setFotoPreview] = useState(null);
 
+  // simpan URL object biar bisa di-revoke
+  const objectUrlRef = useRef(null);
+  const fileRef = useRef(null);
+
   useEffect(() => {
+    // bersihin object URL lama kalau ada
+    if (objectUrlRef.current) {
+      URL.revokeObjectURL(objectUrlRef.current);
+      objectUrlRef.current = null;
+    }
+
     if (data) {
       setForm({
         judul: data.judul || "",
@@ -20,12 +39,25 @@ export default function KegiatanModal({ data, onClose, onSave }) {
         deskripsi: data.deskripsi || "",
         foto: null,
       });
-      // data.foto sudah "kegiatan/xxx.jpg"
+
+      // preview dari foto lama (string path)
       setFotoPreview(data.foto ? `${API_BASE}/storage/${data.foto}` : null);
+
+      // reset input file (biar bersih)
+      if (fileRef.current) fileRef.current.value = "";
     } else {
       setForm({ judul: "", tanggal: "", deskripsi: "", foto: null });
       setFotoPreview(null);
+      if (fileRef.current) fileRef.current.value = "";
     }
+
+    // cleanup saat unmount
+    return () => {
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
+    };
   }, [data]);
 
   const handleChange = (e) => {
@@ -33,9 +65,23 @@ export default function KegiatanModal({ data, onClose, onSave }) {
 
     if (name === "foto") {
       const file = files?.[0] || null;
-      console.log("FILE DIPILIH:", file);
+
+      // revoke object URL sebelumnya
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
+
       setForm((prev) => ({ ...prev, foto: file }));
-      if (file) setFotoPreview(URL.createObjectURL(file));
+
+      if (file) {
+        const url = URL.createObjectURL(file);
+        objectUrlRef.current = url;
+        setFotoPreview(url);
+      } else {
+        // kalau batal pilih file, balik ke foto lama (kalau ada)
+        setFotoPreview(data?.foto ? `${API_BASE}/storage/${data.foto}` : null);
+      }
       return;
     }
 
@@ -65,7 +111,13 @@ export default function KegiatanModal({ data, onClose, onSave }) {
     onClose();
   };
 
-  const fileRef = useRef(null);
+  // ✅ nama file yang ditampilkan:
+  // - kalau user pilih file baru => form.foto.name
+  // - kalau edit & belum pilih file => ambil dari data.foto
+  const displayedFileName =
+    form.foto?.name ||
+    data?.foto_original ||
+    (data?.foto ? getBaseName(data.foto) : "");
 
   return (
     <div className="fixed inset-0 bg-black/30 flex justify-center items-center z-50">
@@ -122,7 +174,6 @@ export default function KegiatanModal({ data, onClose, onSave }) {
               Foto {!data && <span className="text-red-500">*</span>}
             </label>
 
-            {/* input asli disembunyikan */}
             <input
               ref={fileRef}
               type="file"
@@ -132,7 +183,6 @@ export default function KegiatanModal({ data, onClose, onSave }) {
               className="hidden"
             />
 
-            {/* UI custom: tombol (ini yang jadi "Choose file" versi kamu) */}
             <div className="mt-1 flex items-center gap-2">
               <button
                 type="button"
@@ -143,7 +193,7 @@ export default function KegiatanModal({ data, onClose, onSave }) {
               </button>
 
               <span className="text-sm text-gray-600">
-                {form.foto ? form.foto.name : "No file chosen"}
+                {displayedFileName || "No file chosen"}
               </span>
             </div>
 

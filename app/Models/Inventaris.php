@@ -16,5 +16,5 @@ class Inventaris extends Model
         'saldo'
     ];
 
-    public $timestamps = false;
+    public $timestamps = true;
 }

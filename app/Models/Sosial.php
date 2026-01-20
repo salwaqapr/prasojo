@@ -16,5 +16,5 @@ class Sosial extends Model
         'saldo'
     ];
 
-    public $timestamps = false;
+    public $timestamps = true;
 }

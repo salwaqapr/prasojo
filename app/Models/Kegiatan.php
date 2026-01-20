@@ -12,6 +12,7 @@ class Kegiatan extends Model
         'judul',
         'tanggal',
         'deskripsi',
-        'foto'
+        'foto',
+        'foto_original'
     ];
 }

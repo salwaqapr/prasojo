@@ -198,7 +198,7 @@ export default function DashboardPanel({ title = "KAS", chart }) {
           className="text-gray-700 hover:text-black text-sm"
           title="Collapse"
         >
-          {collapsed ? "▲" : "▼"}
+          {collapsed ? "▼" : "▲"}
         </button>
       </div>
 

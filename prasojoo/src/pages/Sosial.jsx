@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import SosialTable from "../components/SosialTable";
 import SosialModal from "../components/SosialModal";
 import { getSosial, createSosial, updateSosial, deleteSosial } from "../services/sosialApi";
+import SosialPdfTemplate from "../components/pdf/SosialPdfTemplate";
 
 const bulanNama = [
   "Januari","Februari","Maret","April","Mei","Juni",
@@ -189,15 +190,39 @@ export default function Sosial({ userNama }) {
     };
   }, [filteredData]);
 
-  const downloadPdf = () => {
-    const params = new URLSearchParams();
-    if (search) params.append("search", search);
-    if (bulan !== "") params.append("bulan", bulan);
-    if (tahun !== "") params.append("tahun", tahun);
+/* =====================
+    PDF
+  ===================== */
+  const pdfRef = useRef(null);
 
-    const baseUrl = "http://127.0.0.1:8000/api/sosial/pdf";
-    const url = params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
-    window.location.href = url;
+  const downloadPdf = async () => {
+    try {
+      if (!pdfRef.current) {
+        alert("Template PDF belum siap. Coba refresh halaman.");
+        return;
+      }
+
+      // import dinamis agar tidak error bundler
+      const mod = await import("html2pdf.js");
+      const html2pdf = mod.default ?? mod;
+
+      const opt = {
+        margin: 10,
+        filename: "laporan-sosial.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+        },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      };
+
+      await html2pdf().set(opt).from(pdfRef.current).save();
+    } catch (e) {
+      console.error(e);
+      alert("Gagal membuat PDF. Cek console (F12).");
+    }
   };
 
   return (
@@ -328,6 +353,11 @@ export default function Sosial({ userNama }) {
         canManage={canManage}
       />
 
+      {/* TEMPLATE PDF (hidden tapi dirender) */}
+      <div style={{ position: "fixed", left: "-99999px", top: 0, width: "794px" }}>
+        <SosialPdfTemplate ref={pdfRef} data={sortedData} jenis="sosial" />
+      </div>
+      
       {(modalOpen || editing) && (
         <SosialModal
           data={editing}

@@ -7,6 +7,7 @@ import {
   updateInventaris,
   deleteInventaris,
 } from "../services/inventarisApi";
+import InventarisPdfTemplate from "../components/pdf/InventarisPdfTemplate";
 
 const bulanNama = [
   "Januari","Februari","Maret","April","Mei","Juni",
@@ -207,17 +208,39 @@ export default function Inventaris({ userNama }) {
     };
   }, [filteredData]);
 
-  const downloadPdf = () => {
-    const params = new URLSearchParams();
+/* =====================
+    PDF
+  ===================== */
+  const pdfRef = useRef(null);
 
-    if (search) params.append("search", search);
-    if (bulan !== "") params.append("bulan", bulan);
-    if (tahun !== "") params.append("tahun", tahun);
+  const downloadPdf = async () => {
+    try {
+      if (!pdfRef.current) {
+        alert("Template PDF belum siap. Coba refresh halaman.");
+        return;
+      }
 
-    const baseUrl = "http://127.0.0.1:8000/api/inventaris/pdf";
-    const url = params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
+      // import dinamis agar tidak error bundler
+      const mod = await import("html2pdf.js");
+      const html2pdf = mod.default ?? mod;
 
-    window.location.href = url;
+      const opt = {
+        margin: 10,
+        filename: "laporan-inventaris.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+        },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      };
+
+      await html2pdf().set(opt).from(pdfRef.current).save();
+    } catch (e) {
+      console.error(e);
+      alert("Gagal membuat PDF. Cek console (F12).");
+    }
   };
 
   return (
@@ -348,6 +371,11 @@ export default function Inventaris({ userNama }) {
         canManage={canManageInventaris}
       />
 
+      {/* TEMPLATE PDF (hidden tapi dirender) */}
+      <div style={{ position: "fixed", left: "-99999px", top: 0, width: "794px" }}>
+        <InventarisPdfTemplate ref={pdfRef} data={sortedData} jenis="inventaris" />
+      </div>
+      
       {(modalOpen || editing) && (
         <InventarisModal
           data={editing}

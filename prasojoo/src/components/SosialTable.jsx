@@ -10,6 +10,7 @@ export default function SosialTable({
   saldoAkhir,
   canManage = false, // ✅ tambah ini
 }) {
+
   const colSpanEmpty = canManage ? 7 : 6;
 
   return (
@@ -32,9 +33,9 @@ export default function SosialTable({
             <th className="p-2 text-center">Subjek</th>
             <th className="p-2 text-center">Pemasukan</th>
             <th className="p-2 text-center">Pengeluaran</th>
-
-            {/* ✅ Aksi hanya admin / sie sosial */}
-            {canManage && <th className="p-2 text-center">Aksi</th>}
+            {canManage && 
+            <th className="p-2 text-center">Aksi</th>
+            }
           </tr>
         </thead>
 
@@ -52,7 +53,9 @@ export default function SosialTable({
 
           {data.map((k, i) => (
             <tr key={k.id} className="border-b border-gray-300 hover:bg-gray-50">
-              <td className="p-2 text-center font-medium">{i + 1}</td>
+              <td className="p-2 text-center font-medium">
+                {i + 1}
+              </td>
 
               <td className="p-2 text-center font-medium">
                 S-{String(k.id).padStart(4, "0")}
@@ -62,7 +65,9 @@ export default function SosialTable({
                 {String(k.tanggal).split("-").reverse().join("-")}
               </td>
 
-              <td className="p-2 font-medium">{k.subjek}</td>
+              <td className="p-2 font-medium">
+                {k.subjek}
+              </td>
 
               <td className="p-2 text-right font-medium">
                 {(k.pemasukan ?? 0).toLocaleString("id-ID")}
@@ -72,7 +77,6 @@ export default function SosialTable({
                 {(k.pengeluaran ?? 0).toLocaleString("id-ID")}
               </td>
 
-              {/* ✅ Tombol Edit/Hapus hanya jika canManage */}
               {canManage && (
                 <td className="p-2 text-center">
                   <div className="flex justify-center gap-3">
@@ -132,6 +136,9 @@ export default function SosialTable({
             </tr>
           ))}
 
+          {/* =====================
+              HITUNG SALDO
+          ===================== */}
           {/* ===== BARIS JUMLAH ===== */}
           {data.length > 0 && (
             <tr className="font-bold">

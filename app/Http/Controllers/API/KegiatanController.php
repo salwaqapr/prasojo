@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Kegiatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class KegiatanController extends Controller
 {

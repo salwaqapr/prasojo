@@ -15,7 +15,7 @@ export default function KegiatanTable({
         style={{ WebkitOverflowScrolling: "touch", scrollbarGutter: "stable" }}
       >
         <div className="min-w-[1000px]">
-          <table className="w-full bg-white table-auto">
+          <table className="w-full bg-white table-auto text-sm">
             <thead className="bg-[#111827] text-white text-sm">
               <tr>
                 <th className="p-2 text-center whitespace-nowrap">No</th>

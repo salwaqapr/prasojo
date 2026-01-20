@@ -76,17 +76,17 @@ export default function App() {
       <Route path="/kegiatan-detail" element={<KegiatanDetail />} />
 
       {/* Halaman dengan MainLayout (protected) */}
-      <Route path="/dashboard"element={<Protected pageTitle="Dashboard"><Dashboard /></Protected>}/>
+      <Route path="/dashboard"element={<Protected pageTitle="🏠 DASHBOARD"><Dashboard /></Protected>}/>
 
-      <Route path="/kas" element={<Protected pageTitle="Kas"><Kas userNama={user?.nama} /></Protected>}/>
+      <Route path="/kas" element={<Protected pageTitle="💰 KAS"><Kas userNama={user?.nama} /></Protected>}/>
 
-      <Route path="/inventaris" element={<Protected pageTitle="Inventaris"><Inventaris userNama={user?.nama} /></Protected>}/>
+      <Route path="/inventaris" element={<Protected pageTitle="💸 INVENTARIS"><Inventaris userNama={user?.nama} /></Protected>}/>
 
-      <Route path="/sosial" element={<Protected pageTitle="Sosial"><Sosial userNama={user?.nama} /></Protected>}/>
+      <Route path="/sosial" element={<Protected pageTitle="🪙 SOSIAL"><Sosial userNama={user?.nama} /></Protected>}/>
 
-      <Route path="/kegiatan" element={<Protected pageTitle="Kegiatan"><Kegiatann /></Protected>}/>
+      <Route path="/kegiatan" element={<Protected pageTitle="📝 KEGIATAN"><Kegiatann /></Protected>}/>
 
-      <Route path="/hakAkses" element={<Protected pageTitle="Hak Akses"><HakAkses /></Protected>}/>
+      <Route path="/hakAkses" element={<Protected pageTitle="🔐 HAK AKSES"><HakAkses /></Protected>}/>
       
       <Route path="*" element={<div style={{ padding: 20 }}>404</div>} />
     </Routes>

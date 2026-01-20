@@ -12,7 +12,7 @@ export default function HakAksesTable({
         style={{ WebkitOverflowScrolling: "touch", scrollbarGutter: "stable" }}
       >
         <div className="min-w-[800px]">
-          <table className="w-full bg-white table-auto">
+          <table className="w-full bg-white table-auto text-sm">
             <thead className="bg-[#111827] text-white text-sm">
               <tr>
                 <th className="p-2 text-center whitespace-nowrap">No</th>
@@ -71,7 +71,7 @@ export default function HakAksesTable({
                   <td className="text-center font-medium passwordCell whitespace-nowrap">
                     ********
                   </td>
-                  <td className="text-center font-medium roleCell whitespace-nowrap">
+                  <td className="text-center font-medium roleCell whitespace-nowrap min-w-[120px] capitalize">
                     {u.role}
                   </td>
 

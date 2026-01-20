@@ -21,7 +21,7 @@ export default function InventarisTable({
       >
         {/* ✅ wrapper biar tabel punya lebar minimum */}
         <div className="min-w-[900px]">
-          <table className="w-full bg-white table-auto">
+          <table className="w-full bg-white table-auto text-sm">
             <thead className="bg-[#111827] text-white text-sm">
               <tr>
                 <th className="p-2 text-center whitespace-nowrap">No</th>
@@ -83,11 +83,11 @@ export default function InventarisTable({
                   </td>
 
                   <td className="p-2 text-right font-medium whitespace-nowrap">
-                    {(k.pemasukan ?? 0).toLocaleString("id-ID")}
+                    Rp {(k.pemasukan ?? 0).toLocaleString("id-ID")}
                   </td>
 
                   <td className="p-2 text-right font-medium whitespace-nowrap">
-                    {(k.pengeluaran ?? 0).toLocaleString("id-ID")}
+                    Rp {(k.pengeluaran ?? 0).toLocaleString("id-ID")}
                   </td>
 
                   {/* ✅ Tombol Edit/Hapus hanya jika canManage */}

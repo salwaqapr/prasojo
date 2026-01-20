@@ -44,7 +44,7 @@ export default function Topbar({ pageTitle = "", onToggleMenu, userName = "" }) 
           {/* Title */}
           <p
             className="
-              text-sm sm:text-xl
+              text-medium sm:text-xl
               font-semibold
               truncate
               leading-tight

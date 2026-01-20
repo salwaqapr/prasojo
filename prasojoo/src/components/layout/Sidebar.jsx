@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const logoPublic = "/logo_prasojo.png";
@@ -8,26 +8,31 @@ export default function Sidebar({ isOpen, onClose, userNama }) {
 
   // ✅ Admin jika userNama === "Admin" (abaikan spasi & kapital)
   const isAdmin =
-    typeof userNama === "string" &&
-    userNama.trim().toLowerCase() === "admin";
+    typeof userNama === "string" && userNama.trim().toLowerCase() === "admin";
 
   const isActive = (to) => location.pathname === to;
+
+  // ✅ kunci scroll body ketika sidebar mobile terbuka
+  useEffect(() => {
+    if (isOpen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   return (
     <>
       {/* overlay mobile */}
       <div
-        className={`fixed inset-0 z-40 lg:hidden transition-all duration-300
-          ${
-            isOpen
-              ? "pointer-events-auto backdrop-brightness-25"
-              : "pointer-events-none backdrop-brightness-100"
-          }`}
+        className={`fixed inset-0 z-40 lg:hidden transition-opacity duration-300 ${
+          isOpen ? "opacity-100 bg-black/40" : "opacity-0 pointer-events-none"
+        }`}
         onClick={onClose}
       />
 
       <aside
-        className={`fixed left-0 top-0 z-50 h-screen w-60 bg-[#111827] p-6 transform transition-transform duration-300
+        className={`fixed left-0 top-0 z-50 h-dvh w-60 bg-[#111827] p-6 transform transition-transform duration-300
         lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
         onClick={(e) => e.stopPropagation()}
       >

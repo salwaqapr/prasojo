@@ -94,8 +94,9 @@ function ChartBlock({ title, data, lines, height = 170, mode }) {
     <div className="mb-6">
       <div className="text-sm font-bold text-gray-800 mb-2">{title}</div>
 
+      {/* ✅ seperti Kas: hanya bagian chart yang bisa scroll horizontal */}
       <div
-        className="w-full overflow-x-auto overscroll-x-contain"
+        className="w-full overflow-x-auto overscroll-x-contain touch-pan-x"
         style={{ WebkitOverflowScrolling: "touch", scrollbarGutter: "stable" }}
       >
         <div
@@ -187,15 +188,17 @@ export default function DashboardPanel({ title = "KAS", chart }) {
   const mode = chart?.mode || "bulan_tahun";
 
   return (
-    <div className="bg-white rounded-xl shadow">
-      <div className="flex items-center justify-between px-5 py-3">
-        <div className="font-semibold tracking-wide text-sm sm:text-base">
+    // ✅ seperti Kas: card + overflow hidden biar rapi
+    <div className="bg-white rounded-2xl shadow overflow-hidden">
+      {/* ✅ header: padding responsif */}
+      <div className="flex items-center justify-between px-3 sm:px-4 py-3">
+        <div className="font-semibold tracking-wide text-sm sm:text-base truncate min-w-0">
           {title}
         </div>
 
         <button
           onClick={() => setCollapsed((v) => !v)}
-          className="text-gray-700 hover:text-black text-sm"
+          className="text-gray-700 hover:text-black text-sm flex-shrink-0"
           title="Collapse"
         >
           {collapsed ? "▼" : "▲"}
@@ -203,8 +206,8 @@ export default function DashboardPanel({ title = "KAS", chart }) {
       </div>
 
       {!collapsed && (
-        // ✅ FIX: padding isi panel juga KONSTAN (biar sama dengan topbar & filter)
-        <div className="px-5 pb-5">
+        // ✅ isi panel: padding responsif seperti Kas
+        <div className="px-3 sm:px-4 pb-5">
           <ChartBlock
             title="Pemasukan"
             data={data}
@@ -233,41 +236,41 @@ export default function DashboardPanel({ title = "KAS", chart }) {
             mode={mode}
           />
 
+          {/* ✅ totals: aman di mobile (label bisa truncate, nilai nowrap) */}
           <div className="text-sm space-y-2">
             {/* Pemasukan */}
             <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2 min-w-0">
+              <div className="flex items-center gap-2 min-w-0">
                 <span className="w-2 h-2 rounded-full bg-green-600 inline-block flex-shrink-0" />
                 <span className="text-green-700 truncate">Pemasukan</span>
-                </div>
-                <div className="text-green-700 font-medium text-right whitespace-nowrap">
+              </div>
+              <div className="text-green-700 font-medium text-right whitespace-nowrap">
                 {rupiah(totals.pemasukan)}
-                </div>
+              </div>
             </div>
 
             {/* Pengeluaran */}
             <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2 min-w-0">
+              <div className="flex items-center gap-2 min-w-0">
                 <span className="w-2 h-2 rounded-full bg-red-600 inline-block flex-shrink-0" />
                 <span className="text-red-700 truncate">Pengeluaran</span>
-                </div>
-                <div className="text-red-700 font-medium text-right whitespace-nowrap">
+              </div>
+              <div className="text-red-700 font-medium text-right whitespace-nowrap">
                 {rupiah(totals.pengeluaran)}
-                </div>
+              </div>
             </div>
 
             {/* Saldo */}
             <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2 min-w-0">
+              <div className="flex items-center gap-2 min-w-0">
                 <span className="w-2 h-2 rounded-full bg-blue-600 inline-block flex-shrink-0" />
                 <span className="text-blue-700 truncate">Saldo</span>
-                </div>
-                <div className="text-blue-700 font-medium text-right whitespace-nowrap">
+              </div>
+              <div className="text-blue-700 font-medium text-right whitespace-nowrap">
                 {rupiah(totals.saldo)}
-                </div>
+              </div>
             </div>
-            </div>
-
+          </div>
         </div>
       )}
     </div>

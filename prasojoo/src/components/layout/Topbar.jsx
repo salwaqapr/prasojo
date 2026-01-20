@@ -11,15 +11,15 @@ export default function Topbar({ pageTitle = "", onToggleMenu, userName = "" }) 
   const title = showUserName ? `Selamat Datang, ${userName} 👋` : pageTitle;
 
   return (
-    // ✅ SAMA dengan Dashboard.jsx → px-5
-    <div className="px-5 py-3">
+    <div className="px-1 py-3">
       <div
         className="
           flex items-center justify-between
           bg-[#111827] text-white
-          px-5 py-3
+          px-4 sm:px-5 py-3
           rounded-lg
           gap-3
+          min-w-0
         "
       >
         {/* KIRI: hamburger + title */}
@@ -63,10 +63,11 @@ export default function Topbar({ pageTitle = "", onToggleMenu, userName = "" }) 
           className="
             bg-red-600 hover:bg-red-700
             text-white
-            px-4 py-2
+            px-3 sm:px-4 py-2
             rounded-md
             text-xs sm:text-base
             flex-shrink-0
+            whitespace-nowrap
           "
         >
           Logout

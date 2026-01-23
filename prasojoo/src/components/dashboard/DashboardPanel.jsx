@@ -96,7 +96,7 @@ function ChartBlock({ title, data, lines, height = 170, mode }) {
 
       {/* ✅ seperti Kas: hanya bagian chart yang bisa scroll horizontal */}
       <div
-        className="w-full overflow-x-auto overscroll-x-contain touch-pan-x"
+        className="w-full overflow-x-auto overscroll-x-contain"
         style={{ WebkitOverflowScrolling: "touch", scrollbarGutter: "stable" }}
       >
         <div

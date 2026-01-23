@@ -1,4 +1,4 @@
-// src/utils/auth.js
+import axios from "axios";
 
 export function getLocalUser() {
   try {
@@ -9,10 +9,13 @@ export function getLocalUser() {
   }
 }
 
-export function logout() {
-  // 1) hapus user dulu
-  localStorage.removeItem("user");
-
-  // 2) pindah ke landing (replace supaya history bersih)
-  window.location.replace("/");
+export async function logout() {
+  try {
+    await axios.post("http://127.0.0.1:8000/api/logout", {}, { withCredentials: true });
+  } catch (e) {
+    // kalau gagal pun tetep lanjut hapus local & redirect
+  } finally {
+    localStorage.removeItem("user");
+    window.location.replace("/");
+  }
 }

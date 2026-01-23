@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState }  from "react";
 import { useLocation } from "react-router-dom";
 import { logout } from "../../utils/auth";
 
@@ -9,6 +9,13 @@ export default function Topbar({ pageTitle = "", onToggleMenu, userName = "" }) 
   const showUserName = location.pathname === "/dashboard";
 
   const title = showUserName ? `Selamat Datang, ${userName} 👋` : pageTitle;
+
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const handleLogoutConfirm = () => {
+    setShowLogoutModal(false);
+    logout(); // ini akan redirect ke "/"
+  };
 
   return (
     <div className="px-1 py-3">
@@ -59,7 +66,7 @@ export default function Topbar({ pageTitle = "", onToggleMenu, userName = "" }) 
         {/* KANAN: logout */}
         <button
           type="button"
-          onClick={logout}
+          onClick={() => setShowLogoutModal(true)}
           className="
             bg-red-600 hover:bg-red-700
             text-white
@@ -72,6 +79,31 @@ export default function Topbar({ pageTitle = "", onToggleMenu, userName = "" }) 
         >
           Logout
         </button>
+
+        {showLogoutModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white text-black p-6 rounded-lg shadow-xl w-80 text-center">
+              <h2 className="text-lg font-bold mb-4">Log Out</h2>
+              <p className="mb-4">Apakah Anda yakin akan Log Out?</p>
+
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={handleLogoutConfirm}
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                  Ya
+                </button>
+
+                <button
+                  onClick={() => setShowLogoutModal(false)}
+                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                >
+                  Tidak
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

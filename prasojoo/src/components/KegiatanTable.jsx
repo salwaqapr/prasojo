@@ -11,7 +11,7 @@ export default function KegiatanTable({
   return (
     <div className="bg-white rounded-2xl shadow overflow-hidden">
       <div
-        className="w-full overflow-x-auto overscroll-x-contain touch-pan-x"
+        className="w-full overflow-x-auto overscroll-x-contain"
         style={{ WebkitOverflowScrolling: "touch", scrollbarGutter: "stable" }}
       >
         <div className="min-w-[1000px]">

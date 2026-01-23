@@ -245,11 +245,13 @@ export default function Inventaris({ userNama }) {
 
   return (
     <div className="space-y-4 bg-gray-100 min-h-screen">
-      <div className="w-full max-w-full overflow-x-auto space-y-3">
+      {/* FILTER + BUTTONS */}
+      <div className="space-y-3">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           {/* FILTER */}
           <div className="flex flex-col gap-2 sm:grid sm:grid-cols-3 lg:flex lg:flex-row lg:items-center lg:gap-2 w-full">
-            <div className="relative w-full lg:w-60">
+            {/* search */}
+            <div className="relative w-full lg:w-40">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-4 h-4 text-gray-400 absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none"

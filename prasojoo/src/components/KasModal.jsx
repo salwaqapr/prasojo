@@ -40,10 +40,11 @@ export default function KasModal({ data, onClose, onSave }) {
     setForm((prev) => ({
       ...prev,
       [name]: cleaned,
-      ...(name === "pemasukan" && cleaned ? { pengeluaran: "" } : {}),
-      ...(name === "pengeluaran" && cleaned ? { pemasukan: "" } : {}),
     }));
   };
+
+  const disablePemasukan = Boolean(cleanNumber(form.pengeluaran || ""));
+  const disablePengeluaran = Boolean(cleanNumber(form.pemasukan || ""));
 
   const submit = (e) => {
     e.preventDefault();
@@ -113,6 +114,7 @@ export default function KasModal({ data, onClose, onSave }) {
                 name="pemasukan"
                 value={formatRupiah(form.pemasukan)}
                 onChange={handleCurrencyChange}
+                disabled={disablePemasukan}
                 className="w-full border border-gray-200 p-2 rounded"
               />
             </div>
@@ -124,6 +126,7 @@ export default function KasModal({ data, onClose, onSave }) {
                 name="pengeluaran"
                 value={formatRupiah(form.pengeluaran)}
                 onChange={handleCurrencyChange}
+                disabled={disablePengeluaran}
                 className="w-full border border-gray-200 p-2 rounded"
               />
             </div>

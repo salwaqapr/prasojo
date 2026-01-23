@@ -278,7 +278,7 @@ export default function Kas({ userNama }) {
           {/* FILTER */}
           <div className="flex flex-col gap-2 sm:grid sm:grid-cols-3 lg:flex lg:flex-row lg:items-center lg:gap-2 w-full">
             {/* search */}
-            <div className="relative w-full lg:w-60">
+            <div className="relative w-full lg:w-40">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-4 h-4 text-gray-400 absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none"

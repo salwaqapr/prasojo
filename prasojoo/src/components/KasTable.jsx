@@ -17,7 +17,7 @@ export default function KasTable({
       {/* ✅ hanya tabel yang scroll horizontal */}
       <div
         className="w-full overflow-x-auto overscroll-x-contain touch-auto"
-        style={{ WebkitOverflowScrolling: "touch", scrollbarGutter: "stable" }}
+        style={{ WebkitOverflowScrolling: "touch" }}
       >
         {/* ✅ wrapper biar tabel punya lebar minimum (desktop tetap rapi) */}
         <div className="min-w-[900px]">

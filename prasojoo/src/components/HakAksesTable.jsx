@@ -9,7 +9,7 @@ export default function HakAksesTable({
     <div className="bg-white rounded-2xl shadow overflow-hidden">
       <div
         className="w-full overflow-x-auto overscroll-x-contain"
-        style={{ WebkitOverflowScrolling: "touch", scrollbarGutter: "stable" }}
+        style={{ WebkitOverflowScrolling: "touch"}} //scroll lebih enak
       >
         <div className="min-w-[800px]">
           <table className="w-full bg-white table-auto text-sm">
@@ -17,16 +17,7 @@ export default function HakAksesTable({
               <tr>
                 <th className="p-2 text-center whitespace-nowrap">No</th>
                 <th className="p-2 text-center whitespace-nowrap">ID</th>
-
-                {/* ✅ kalau kamu memang toggle sort ID, header ini tetap bisa dipakai tanpa ubah fungsi */}
-                <th
-                  className="p-2 text-center cursor-pointer select-none whitespace-nowrap"
-                  onClick={onToggleSortId}
-                >
-                  Nama{" "}
-                  {sortDir !== "id" && ""}
-                </th>
-
+                <th className="p-2 text-center whitespace-nowrap">Nama</th>
                 <th className="p-2 text-center whitespace-nowrap">Email</th>
                 <th className="p-2 text-center whitespace-nowrap">Username</th>
                 <th className="p-2 text-center whitespace-nowrap">Password</th>

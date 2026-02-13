@@ -153,6 +153,7 @@ export default function HakAksesModal({ data, onClose, onSave }) {
                       viewBox="0 0 24 24"
                       stroke="currentColor"
                     >
+                      {/* mata tutup */}
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -161,6 +162,7 @@ export default function HakAksesModal({ data, onClose, onSave }) {
                         c-4.478 0-8.268-2.943-9.542-7
                         a9.956 9.956 0 012.042-3.368"
                       />
+                      {/* mata buka */}
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -169,6 +171,7 @@ export default function HakAksesModal({ data, onClose, onSave }) {
                         c4.478 0 8.268 2.943 9.542 7
                         a9.964 9.964 0 01-4.293 5.293"
                       />
+                      {/* garis coret */}
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"

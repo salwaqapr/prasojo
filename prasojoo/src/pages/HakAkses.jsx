@@ -79,17 +79,42 @@ export default function HakAkses() {
      CRUD
   ===================== */
   const handleSave = async (data) => {
-    if (editing) {
-      await updateHakAkses(editing.id, data);
-      showNotif("Data berhasil diperbarui");
-    } else {
-      await createHakAkses(data);
-      showNotif("Data berhasil ditambahkan");
-    }
+    try {
+      if (editing) {
+        await updateHakAkses(editing.id, data);
+        showNotif("Data berhasil diperbarui");
+      } else {
+        await createHakAkses(data);
+        showNotif("Data berhasil ditambahkan");
+      }
 
-    setModalOpen(false);
-    setEditing(null);
-    loadData();
+      setModalOpen(false);
+      setEditing(null);
+      loadData();
+      
+    } catch (err) {
+      // Laravel validation error -> 422
+      const status = err?.response?.status;
+      const errors = err?.response?.data?.errors;
+
+      if (status === 422 && errors) {
+        if (errors.username) {
+          alert("Username sudah ada");
+          return;
+        }
+        if (errors.email) {
+          alert("Email sudah ada");
+          return;
+        }
+
+        // fallback kalau ada error validasi lain
+        const firstMsg = Object.values(errors).flat()?.[0];
+        alert(firstMsg || "Data tidak valid");
+        return;
+      }
+
+      alert("Gagal menyimpan data");
+    }
   };
 
   const handleDeleteClick = (id) => {

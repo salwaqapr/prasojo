@@ -55,7 +55,7 @@ const Footer = () => {
         </div>
       </div>
       <div className='border-t border-gray-700 py-4 mt-10 text-center text-white'>
-        Copyright 2025 © Salwaqapr
+        Created by Salwaqapr
       </div>
     </div>
   )

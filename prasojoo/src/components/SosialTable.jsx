@@ -17,7 +17,7 @@ export default function SosialTable({
       {/* ✅ hanya tabel yang scroll horizontal */}
       <div
         className="w-full overflow-x-auto overscroll-x-contain"
-        style={{ WebkitOverflowScrolling: "touch", scrollbarGutter: "stable" }}
+        style={{ WebkitOverflowScrolling: "touch" }}
       >
         {/* ✅ wrapper biar tabel punya lebar minimum */}
         <div className="min-w-[900px]">

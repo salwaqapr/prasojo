@@ -49,7 +49,7 @@ function formatTooltipTitle(row, mode) {
   }
 
   if (mode === "harian") {
-    return `Tanggal ${x}${tahun ? ` ${tahun}` : ""}`;
+    return `Tanggal ${x}`;
   }
 
   return `${x ?? ""}`;
@@ -97,7 +97,7 @@ function ChartBlock({ title, data, lines, height = 170, mode }) {
       {/* ✅ seperti Kas: hanya bagian chart yang bisa scroll horizontal */}
       <div
         className="w-full overflow-x-auto overscroll-x-contain"
-        style={{ WebkitOverflowScrolling: "touch", scrollbarGutter: "stable" }}
+        style={{ WebkitOverflowScrolling: "touch" }}
       >
         <div
           className="relative"
@@ -114,10 +114,13 @@ function ChartBlock({ title, data, lines, height = 170, mode }) {
                 dataKey={xDataKey}
                 interval={0}
                 height={18}
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: 10 }}
                 tickFormatter={(v, idx) => {
-                  if (mode === "bulan_tahun") return chartData[idx]?.x ?? "";
-                  if (isMonthMode(mode)) return String(v);
+                  const a = mode === "bulan_tahun" ? chartData[idx]?.x : v;
+                  const m = Number (a);
+                  if (isMonthMode(mode) && m >= 1 && m <= 12) {
+                    return bulanNama[m];
+                  }
                   return String(v);
                 }}
               />
@@ -225,7 +228,7 @@ export default function DashboardPanel({ title = "KAS", chart }) {
           />
 
           <ChartBlock
-            title="Pemasukan dan Pengeluaran"
+            title="Pemasukan, Pengeluaran, Saldo"
             data={data}
             height={210}
             lines={[

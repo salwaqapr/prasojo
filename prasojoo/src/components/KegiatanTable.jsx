@@ -12,7 +12,7 @@ export default function KegiatanTable({
     <div className="bg-white rounded-2xl shadow overflow-hidden">
       <div
         className="w-full overflow-x-auto overscroll-x-contain"
-        style={{ WebkitOverflowScrolling: "touch", scrollbarGutter: "stable" }}
+        style={{ WebkitOverflowScrolling: "touch"}}
       >
         <div className="min-w-[1000px]">
           <table className="w-full bg-white table-auto text-sm">

@@ -108,7 +108,7 @@ const Kegiatan = () => {
       {/* ================= NAV BUTTON ================= */}
       <div className="flex justify-between items-center mb-1 w-full px-2">
         <div className="flex items-center gap-2">
-          {currentIndex > 0 && (
+          {currentIndex > 0 && ( /*tombool kiri muncul jika belum diujung paling kiri */
             <button
               onClick={prevKegiatan}
               className="p-3 bg-gray-200 rounded"
@@ -117,7 +117,7 @@ const Kegiatan = () => {
             </button>
           )}
 
-          {currentIndex < data.length - cardsToShow && (
+          {currentIndex < data.length - cardsToShow && ( /*tombool kanan muncul jika belum diujung paling kanan */
             <button
               onClick={nextKegiatan}
               className="p-3 bg-gray-200 rounded"

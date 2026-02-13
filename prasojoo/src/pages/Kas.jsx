@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import KasTable from "../components/KasTable";
 import KasModal from "../components/KasModal";
 import { getKas, createKas, updateKas, deleteKas } from "../services/kasApi";
@@ -270,6 +271,10 @@ export default function Kas({ userNama }) {
     };
   }, [filteredData]);
 
+  const navigate = useNavigate();
+  const iuranKas = () => navigate("/iuran-kas");
+
+
   return (
     <div className="space-y-4 bg-gray-100 min-h-screen">
       {/* FILTER + BUTTONS */}
@@ -333,7 +338,16 @@ export default function Kas({ userNama }) {
 
           {/* ✅ BUTTONS: hanya admin/bendahara */}
           {canManage && (
-            <div className="flex flex-col gap-2 sm:flex-row sm:justify-end lg:items-center">
+            <div className="flex flex-col gap-2 sm:flex-row sm:justify-end lg:items-center lg:shrink-0">
+              <button
+                onClick={iuranKas}
+                className="inline-flex items-center justify-center gap-2
+                          bg-red-700 text-white px-2 py-1 rounded
+                          hover:bg-red-800 transition
+                          w-full sm:w-auto"
+              >
+              <span>Iuran Kas</span>
+              </button>
               <button
                 onClick={downloadPdf}
                 className="inline-flex items-center justify-center gap-2

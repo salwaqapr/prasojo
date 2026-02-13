@@ -12,6 +12,7 @@ import Inventaris from "./pages/Inventaris";
 import Sosial from "./pages/Sosial";
 import Kegiatann from "./pages/Kegiatan";
 import HakAkses from "./pages/HakAkses";
+import IuranKas from "./pages/IuranKas";
 
 function getLocalUser() {
   try {
@@ -87,7 +88,9 @@ export default function App() {
       <Route path="/kegiatan" element={<Protected pageTitle="📝 KEGIATAN"><Kegiatann /></Protected>}/>
 
       <Route path="/hakAkses" element={<Protected pageTitle="🔐 HAK AKSES"><HakAkses /></Protected>}/>
-      
+
+      <Route path="/iuran-kas" element={<Protected pageTitle="🧾 IURAN KAS"><IuranKas userNama={user?.nama} /> </Protected>}/>
+
       <Route path="*" element={<div style={{ padding: 20 }}>404</div>} />
     </Routes>
   );

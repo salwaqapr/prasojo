@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kas;
+use App\Models\IuranPayment;
+use App\Services\IuranKasSyncService; // ✅ tambah
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -21,7 +23,6 @@ class KasController extends Controller
             $query->whereYear('tanggal', $request->tahun);
         }
 
-        // SORT tanggal (default DESC)
         $sort = $request->get('sort', 'desc');
 
         return response()->json(
@@ -66,7 +67,56 @@ class KasController extends Controller
 
     public function destroy($id)
     {
-        Kas::destroy($id);
+        $kas = Kas::findOrFail($id);
+
+        $subjek = trim((string) $kas->subjek);
+
+        $bulan = null;
+        $tahun = null;
+
+        if (stripos($subjek, 'Iuran bulan ') === 0) {
+            $rest = trim(substr($subjek, strlen('Iuran bulan '))); // "Februari 2026"
+            $parts = preg_split('/\s+/', $rest);
+
+            $tahunParsed = (int) end($parts);
+            array_pop($parts);
+
+            $bulanNama = strtolower(trim(implode(' ', $parts)));
+
+            $mapBulan = [
+                'januari' => 1,
+                'februari' => 2,
+                'maret' => 3,
+                'april' => 4,
+                'mei' => 5,
+                'juni' => 6,
+                'juli' => 7,
+                'agustus' => 8,
+                'september' => 9,
+                'oktober' => 10,
+                'november' => 11,
+                'desember' => 12,
+            ];
+
+            if ($tahunParsed >= 2000 && $tahunParsed <= 2100 && isset($mapBulan[$bulanNama])) {
+                $bulan = $mapBulan[$bulanNama];
+                $tahun = $tahunParsed;
+
+                // ✅ hapus semua iuran payment pada bulan+tahun tsb (semua anggota)
+                IuranPayment::where('bulan', $bulan)
+                    ->where('tahun', $tahun)
+                    ->delete();
+            }
+        }
+
+        // hapus kasnya
+        $kas->delete();
+
+        // ✅ pastikan kas iuran bulan tsb konsisten (harusnya hilang karena total=0)
+        if ($bulan !== null && $tahun !== null) {
+            IuranKasSyncService::syncMonthlyKas((int)$bulan, (int)$tahun);
+        }
+
         return response()->json(['message' => 'deleted']);
     }
 
@@ -74,17 +124,14 @@ class KasController extends Controller
     {
         $query = Kas::query();
 
-        // SEARCH
         if ($request->filled('search')) {
             $query->where('subjek', 'like', '%' . $request->search . '%');
         }
 
-        // BULAN (React sudah 1–12)
         if ($request->filled('bulan')) {
             $query->whereMonth('tanggal', $request->bulan);
         }
 
-        // TAHUN
         if ($request->filled('tahun')) {
             $query->whereYear('tanggal', $request->tahun);
         }

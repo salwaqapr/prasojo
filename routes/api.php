@@ -8,6 +8,8 @@ use App\Http\Controllers\API\SosialController;
 use App\Http\Controllers\API\KegiatanController;
 use App\Http\Controllers\API\HakAksesController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\IuranMemberController;
+use App\Http\Controllers\API\IuranPaymentController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -42,3 +44,18 @@ Route::get('/hakAkses', [HakAksesController::class, 'index']);
 Route::post('/hakAkses', [HakAksesController::class, 'store']);
 Route::put('/hakAkses/{id}', [HakAksesController::class, 'update']);
 Route::delete('/hakAkses/{id}', [HakAksesController::class, 'destroy']);
+
+// Anggota iuran
+Route::get('/iuran-members', [IuranMemberController::class, 'index']);
+Route::post('/iuran-members', [IuranMemberController::class, 'store']);
+Route::put('/iuran-members/{id}', [IuranMemberController::class, 'update']);
+Route::delete('/iuran-members/{id}', [IuranMemberController::class, 'destroy']);
+
+// Iuran per anggota
+Route::get('/iuran-members/{memberId}/payments', [IuranPaymentController::class, 'listByMember']);
+Route::post('/iuran-members/{memberId}/payments', [IuranPaymentController::class, 'store']);
+
+Route::get('/iuran-members/{memberId}/summary', [IuranPaymentController::class, 'summaryByMember']);
+
+Route::put('/iuran-payments/{paymentId}', [IuranPaymentController::class, 'update']);
+Route::delete('/iuran-payments/{paymentId}', [IuranPaymentController::class, 'destroy']);
